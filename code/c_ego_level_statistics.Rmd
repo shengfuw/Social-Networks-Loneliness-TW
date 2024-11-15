@@ -1,0 +1,302 @@
+---
+title: "(Sociological Research Methods - Final Project)"
+author: "Shengfu Wang（r11325008）"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float: true
+    code_download: true
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '/Users/Shengfu/Desktop/Projects/Personal Network and Loneliness')
+```
+
+Initialize sink file to hold printed output
+```{r}
+my_sink <- file("log/c_ego_level_statistics_R.txt", open = "wt")
+sink(my_sink ,type = "output")
+sink(my_sink, type = "message")
+
+t0 <- Sys.time()
+print("Time began:")
+print(t0)
+```
+
+Load Packages
+```{r}
+library(tidyverse)
+library(haven)
+library(egor)
+library(igraph)
+library(ggraph)
+library(tidygraph)
+library(skimr)
+library(janitor)
+```
+
+### Load Data 
+```{r}
+file_path = "workdata"
+
+# 1. Ego data
+ego_df <- read_dta(file.path(file_path, "ego_data.dta"))
+ego_df <- ego_df %>% as_factor(levels = "labels") %>% zap_formats() %>% zap_label()
+
+dim(ego_df)
+# str(ego_df)
+
+save(ego_df, file = file.path(file_path, "ego_data.rda"))
+
+# 2. Alter data
+alter_df <- read_dta(file.path(file_path, "alter_data.dta"))
+alter_df <- alter_df %>% as_factor(levels = "labels") %>% zap_formats() %>% zap_label()
+
+dim(alter_df)
+# str(alter_df)
+
+save(alter_df, file = file.path(file_path, "alter_data.rda"))
+
+# 3. Alter-alter data
+aatie_df <- read_dta(file.path(file_path, "aatie.dta"))
+aatie_df <- aatie_df %>% zap_formats() %>% zap_label()
+
+dim(aatie_df)
+# str(alter_df)
+
+save(aatie_df, file = file.path(file_path, "aatie.rda"))
+
+
+# Left join
+(data <- left_join(alter_df, ego_df, by = "ego_id", suffix = c(".ego", ".alter")))
+data %>% select(alter_id, ego_id, educat.ego, educat.alter)
+```
+
+
+### Create egor object
+```{r}
+egor.obj <- threefiles_to_egor(egos = ego_df, 
+                               alters.df = alter_df, 
+                               edges = aatie_df, 
+                               ID.vars = list(ego = "ego_id", 
+                                              alter = "alter_id", 
+                                              source = "from", 
+                                              target = "to"))
+summary(egor.obj)
+head(ego_density(egor.obj))
+```
+
+```{r}
+# Converte to a list of igraph networks.
+gr.list <- as_igraph(egor.obj)
+
+head(gr.list)
+head(names(gr.list))
+
+# In gr.list, the igraph ego-networks do not include the ego node. We can create the same list, but now include a node for ego in each igraph ego-network.
+gr.list.ego <- as_igraph(egor.obj, include.ego = TRUE)
+```
+
+
+```{r}
+# Create one ego network to demonstrate
+ego <- names(gr.list)[7] # Without ego (gr.list)
+gr <- gr.list[[ego]]
+class(gr)
+
+gr.ego <- gr.list.ego[[ego]] # with ego (gr.list.ego)
+V(gr.ego)
+
+plot(gr)
+```
+
+
+### Measures of ego-network composition
+Calculate ego-level summary variable
+```{r}
+ego_level_statistics <- tibble(ego_id = ego_df$ego_id)
+degree = alter_df %>% 
+    group_by(ego_id) %>% 
+    summarise(degree = first(degree)) %>% 
+    select(degree)
+```
+
+
+#### Ego-Alter Similarity
+```{r}
+all_df <- ego_df %>% left_join(alter_df, by = "ego_id", suffix = c(".ego", ".alter"))
+similarity <- tibble(ego_id = ego_df$ego_id)
+
+# Gender
+similarity <- all_df %>% 
+    mutate(gender_same = ifelse(female.ego == female.alter, 1, 0)) %>% 
+    group_by(ego_id) %>% 
+    summarise(I = sum(gender_same),
+              E = n() - I,
+              gender_EI_index = (E - I) / (E + I),
+              gender_same_percent = I / n()) %>% 
+    select(-I, -E) %>%
+    left_join(similarity, by = "ego_id")
+
+# Martial
+similarity <- all_df %>% 
+    mutate(married.ego = ifelse(marital.ego == "Married or cohabiting", 1, 0),
+           married.alter = ifelse(marital.alter == "Married or cohabiting", 1, 0),
+           married_same = ifelse(married.ego == married.alter, 1, 0),
+           married_same = ifelse(is.na(marital.ego) | is.na(marital.alter), NA, married_same)) %>% 
+    group_by(ego_id) %>% 
+    summarise(I = sum(married_same),
+              E = n() - I,
+              married_EI_index = (E - I) / (E + I),
+              married_same_percent = I / n()) %>% 
+    select(-I, -E) %>%
+    left_join(similarity, by = "ego_id")
+
+# Age
+similarity <- all_df %>% 
+    mutate(age_diff2 = (age.ego - age.alter) ** 2) %>% 
+    group_by(ego_id) %>% 
+    summarise(age_distance = (sum(age_diff2) ** 0.5) / n()) %>%
+    left_join(similarity, by = "ego_id")
+
+# Education
+similarity <- all_df %>% 
+    mutate(eduyear_diff2 = (eduyear.ego - eduyear.alter) ** 2) %>% 
+    group_by(ego_id) %>% 
+    summarise(eduyear_distance = (sum(eduyear_diff2) ** 0.5) / n()) %>%
+    left_join(similarity, by = "ego_id")
+
+# Subjective Social Status
+similarity <- all_df %>% 
+    mutate(subjective_status_diff2 = (subjective_status.ego - subjective_status.alter) ** 2) %>% 
+    group_by(ego_id) %>% 
+    summarise(subjective_status_distance = (sum(subjective_status_diff2) ** 0.5) / n()) %>%
+    left_join(similarity, by = "ego_id")
+
+ego_level_statistics <- left_join(ego_level_statistics, similarity, by = "ego_id")
+```
+
+#### Density 
+```{r}
+ego_level_statistics$density <- gr.list %>% # Ego cannot be included in the calculation
+    purrr::map_dbl(edge_density) 
+```
+
+#### Componenets and Fragmentation
+```{r}
+count_components(gr)
+
+ego_level_statistics$component_n <- gr.list %>% # Ego cannot be included in the calculation
+    purrr::map_dbl(count_components)
+
+ego_level_statistics$degree <- gr.list.ego %>% # Ego cannot be included in the calculation
+    purrr::map_dbl(~ degree(., v = "ego"))
+
+ego_level_statistics <- ego_level_statistics %>% 
+    mutate(component_ratio = (component_n - 1) / (degree - 1)) %>% 
+    select(-degree)
+```
+
+#### Structrual Hole Measure
+Pass
+
+#### Ego Betweeness
+```{r}
+betweenness(gr.ego, v = "ego", weights = NA)
+
+ego_level_statistics$betweenness <- gr.list.ego %>% # Ego is included in the calculation
+    purrr::map_dbl(~ betweenness(., v = "ego", weights = NA))
+```
+
+#### Brokerage
+Pass
+
+#### Alter Centrality
+Pass
+
+### Save data
+```{r}
+library(haven)
+write_dta(ego_level_statistics, file.path(file_path, "ego_level_statistics_R.dta"), 
+          version = 14)
+```
+
+
+### Supplemenatry
+```{r}
+# Without ego (gr.list)
+ego <- names(gr.list)[3]
+ego <- "100715"
+
+(gr <- gr.list[[ego]])
+class(gr)
+V(gr)
+E(gr)$weight
+plot(gr)
+
+# With ego (gr.list.ego). 
+(gr.ego <- gr.list.ego[[ego]])
+V(gr.ego)
+E(gr.ego)$weight
+
+# This may create problems in certain functions, for example the plot.igraph() function. So let's replace those NA's with a distinctive weight value for 
+# ego-alter ties: 3.
+E(gr.ego)$weight <- replace_na(E(gr.ego)$weight, 3)
+E(gr.ego)$weight
+
+plot(gr.ego)
+
+# Let's do the weight replacement operation above (NA replaced by 3 for ego-alter 
+# tie weights) for all the ego-networks in gr.list.ego.
+for (i in seq_along(gr.list.ego)) {
+    E(gr.list.ego[[i]])$weight <- E(gr.list.ego[[i]])$weight %>% replace_na(3)
+}
+
+set.seed(607)
+ggraph(gr) + 
+    geom_edge_link() + # Draw edges
+    geom_node_point(size = 5, color = "blue") + # Draw nodes
+    theme_graph(base_family = 'Helvetica') # Set graph theme and font
+```
+
+
+```{r}
+# An igraph object can be indexed as an adjacency matrix. 
+gr[2, ] # Adjacency row of alter .
+gr[, 1:5] # Adjacency columns of alters 1-5
+
+(gr.tbl <- as_tbl_graph(gr))
+
+V(gr)$age
+mean(mean(V(gr)$age, na.rm = TRUE))
+skim_tee(V(gr)$age) 
+tabyl(V(gr)$educat)
+
+tabyl(E(gr)$weight)
+
+# Plot with alter.res as node color
+set.seed(607)
+ggraph(gr.ego) + 
+    geom_edge_link() + # Draw edges
+    geom_node_point(aes(color = rel), size=5) + # Draw nodes setting alter.res 
+    # as node color and fixed node size
+    theme_graph(base_family = 'Helvetica')
+
+set.seed(607)
+ggraph(gr.ego) + 
+    geom_edge_link() +
+    geom_node_label(aes(label = name)) + 
+    theme_graph(base_family = 'Helvetica')
+```
+
+Close the sink
+```{r}
+print(Sys.time())
+print("Time spent:")
+print(difftime(Sys.time(), t0))
+sink()
+```
+

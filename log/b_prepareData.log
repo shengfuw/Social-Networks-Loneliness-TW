@@ -1,0 +1,1440 @@
+--------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/log/b_prepareData.log
+  log type:  text
+ opened on:  15 Nov 2024, 13:05:40
+
+. 
+. cd "$rawdata"
+/Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/rawdata
+
+. use "tscs2017q2.dta", clear
+
+. 
+. /*
+> describe
+> codebook, compact
+> */
+. 
+. **#**************** Ego data ******************
+. 
+. cd "$workdata"
+/Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/workdata
+
+. save ego_data.dta, replace
+(file ego_data.dta not found)
+file ego_data.dta saved
+
+. 
+. ** Gender
+. recode a1 (2=1)(1=0), gen(female)
+(1955 differences between a1 and female)
+
+. 
+. ** Date of Birth
+. recode a2y (96/99=.), gen(byear)
+(2 differences between a2y and byear)
+
+. replace byear = byear + 1911
+variable byear was byte now int
+(1,953 real changes made)
+
+. recode a2m (96/99=.), gen(bmonth)
+(11 differences between a2m and bmonth)
+
+. gen bdate = mdy(bmonth, 15, byear)
+(11 missing values generated)
+
+. format bdate %td
+
+. 
+. gen syear = 2017
+
+. gen sdate = date(string(sdt1, "%8.0f"), "YMD")
+
+. format sdate %td
+
+. 
+. ** Age
+. gen age = age(bdate, sdate) 
+(11 missing values generated)
+
+. gen age_conti = age_frac(bdate, sdate)
+(11 missing values generated)
+
+. replace age = a2r if age == . & a2r < 996
+(10 real changes made)
+
+. replace age_conti = a2r if age_conti == . & a2r < 996
+(10 real changes made)
+
+. 
+. gen age2 = age_conti^2
+(1 missing value generated)
+
+. 
+. recode age (1/30=1)(31/40=2)(41/50=3)(51/60=4)(61/70=5)(71/120=6)(94/99=.), gen(agecat)
+(1954 differences between age and agecat)
+
+. lab define agecat 1"30 years old and below" 2"31 ~ 40 years old" 3"41 ~ 50 years old" 4"51 ~ 60 years old" 5"61 ~ 70 years old" 6"71
+>  and above"
+
+. lab value agecat agecat
+
+. 
+. ** Education
+. recode a13 (1 2 3=1)(4 5=2)(6/9=3)(10/17=4)(18 19=5)(20/21=6)(22 96/99=.), gen(educat)
+(1899 differences between a13 and educat)
+
+. label define educat 1"Elementary or less" 2"Junior high" 3"High school" 4"Junior college" 5"University" 6"Graduate school"
+
+. lab value educat educat
+
+. 
+. recode a13 (1=0)(2=2)(3=6)(4 5=9)(6/9=12)(10/17=14)(18 19=16)(20=18)(21=23)(22 96/99=.), gen(eduyear)
+(1938 differences between a13 and eduyear)
+
+. replace eduyear = a14 if eduyear == . & a14 < 96
+(4 real changes made)
+
+. 
+. recode a14 (96/99=.), gen(eduyear_self) 
+(66 differences between a14 and eduyear_self)
+
+. replace eduyear_self = eduyear if eduyear_self == . 
+(66 real changes made)
+
+. lab var eduyear_self "self-reported education year"
+
+. 
+. replace educat = 6 if eduyear_self >= 18
+(25 real changes made)
+
+. replace educat = 3 if eduyear_self == 12
+(6 real changes made)
+
+. replace educat = 1 if eduyear_self <= 6
+(3 real changes made)
+
+. 
+. ** Urbab or Rural
+. recode a5 (1=1)(2 3=2)(4 5=3)(96/99=.), gen(residence_type)
+(990 differences between a5 and residence_type)
+
+. lab define residence_type 1"Metropolitan" 2"Suburban or town" 3"Rural or farm"
+
+. lab value residence_type residence_type
+
+. 
+. recode residence_type (1=1)(2 3=0), gen(urban)
+(1375 differences between residence_type and urban)
+
+. 
+. ** Region 
+. 
+. ** Religion
+. recode a11 (1=1)(2 4=2)(3=3)(6=4)(7=5)(8=0)(5 9 96/99=.), gen(religion)
+(601 differences between a11 and religion)
+
+. label define religion 0"No religion" 1"Buddism" 2 "Daoism" 3"Folk" 4"Catholic" 5"Christian" 
+
+. label values religion religion
+
+. replace religion = 3 if id == 239803 | id == 304814
+(2 real changes made)
+
+. replace religion = 5 if id == 831807
+(1 real change made)
+
+. 
+. recode a12 (7 8=0)(5 6=1)(3 4=2)(1 2=3), gen(religion_freq)
+(1955 differences between a12 and religion_freq)
+
+. lab define religion_freq 0"Never or almost never" 1"Rarely (once or a few times a year)" 2"Occasionally (once or a few times a month
+> )" 3"Regularly (at least once a week)"
+
+. lab value religion_freq religion_freq
+
+. 
+. ** Ethincity
+. recode a10 (1=1)(2=2)(4=3)(3 5=4)(96/99=.), gen(ethnic)
+(209 differences between a10 and ethnic)
+
+. label define ethnic 1"Minan"  2"Hakka" 3"Mainlander" 4"Aboriginal or other"
+
+. label values ethnic ethnic
+
+. replace ethnic = 1 if ka10 == "台灣人" | ka10 == "台灣人" | id == 100802  | id == 320705 | id ==  320735 | id == 320818 | id == 8138
+> 10
+(30 real changes made)
+
+. replace ethnic = 3 if id == 974705 | id == 239803
+(2 real changes made)
+
+. 
+. ** Marital
+. recode a15 (1=1)(2 3 4=2)(5 6 7=3)(8 96/99=.), gen(marital)
+(308 differences between a15 and marital)
+
+. label define marital 1"Single" 2"Married or cohabiting" 3"Separated, divorced, or widowed" 
+
+. label value marital marital
+
+. 
+. ** Number of People Living Together 
+. recode f2a (0 96/99=.), gen(living_member_size)
+(34 differences between f2a and living_member_size)
+
+. gen living_alone = living_member_size == 1 if living_member_size != .
+(34 missing values generated)
+
+. recode f2c (96=0)(97/99=.), gen(living_preschooler_num)
+(162 differences between f2c and living_preschooler_num)
+
+. recode f2b (96=0)(97/99=.), gen(living_child_num)
+(162 differences between f2b and living_child_num)
+
+. 
+. ** Employment
+. recode f7 (6 7=1)(3 4 5 8 9 10=2)(1 2=3)(96/99=.), gen(employment)
+(1955 differences between f7 and employment)
+
+. replace employment = 4 if f3 == 3 
+(38 real changes made)
+
+. replace employment = 5 if f3 == 6 
+(99 real changes made)
+
+. replace employment = 6 if f3 == 7 | f3 == 8 | f3 == 13 | f3 == 14
+(80 real changes made)
+
+. replace employment = 7 if f3 == 10 
+(214 real changes made)
+
+. replace employment = 8 if f3 == 11 
+(135 real changes made)
+
+. replace employment = 9 if f3 == 12 | f3 == 15 // Sickness Sickness leave, or Unpaid Parental leave
+(112 real changes made)
+
+. 
+. label define employment 1"Government" 2"Private business" 3"Employer or self-employed" 4"Part-timer" 5"Unemployed" 6"Student/militar
+> y" 7"Retire" 8"Homemaker" 9"Sickness/unpaid or parental leave"
+
+. label value employment employment
+
+. 
+. replace employment = 2 if employment == . & f3 == 1
+(5 real changes made)
+
+. replace employment = 4 if employment == . & f3 == 2
+(1 real change made)
+
+. replace employment = 6 if id == 805821
+(1 real change made)
+
+. 
+. recode employment (3 4=3)(1 2 4=4)(5/9=1), gen(employment_short)
+(1710 differences between employment and employment_short)
+
+. replace employment_short = 2 if employment_short == 3 & f7 == 1
+(92 real changes made)
+
+. label define employment_short 1"Unemployed"  2"Employer" 3"Self-employed or Part-timer" 4"Employed"
+
+. label value employment_short employment_short
+
+. 
+. gen employed = employment <= 4 if employment != .
+
+. 
+. ** Income
+. recode f16 (1=0)(2=.5)(3=1.5)(4=2.5)(5=3.5)(6=4.5)(7=5.5)(8=6.5)(9=7.5)(10=8.5)(11=9.5)(12=10.5)(13=11.5)(14=12.5)(15=13.5)(16=14.5)
+> (17=15.5)(18=16.5)(19=17.5)(20=18.5)(21=19.5)(22=25)(23=35)(96/99=.), gen(rincome)
+(1955 differences between f16 and rincome)
+
+. lab var rincome "Personal monthly income (unit: ten housand NTD)"
+
+. 
+. gen lnrincome = log(rincome+1)
+(99 missing values generated)
+
+. 
+. recode f17 (1=0)(2=.5)(3=1.5)(4=2.5)(5=3.5)(6=4.5)(7=5.5)(8=6.5)(9=7.5)(10=8.5)(11=9.5)(12=10.5)(13=11.5)(14=12.5)(15=13.5)(16=14.5)
+> (17=15.5)(18=16.5)(19=17.5)(20=18.5)(21=19.5)(22=25)(23=35)(24=45)(25=75)(26=125)(96/99=.), gen(hincome)
+(1955 differences between f17 and hincome)
+
+. lab var hincome "Household monthly income (unit: ten housand NTD)" // 452 respondents unkown! Too may missing values!
+
+. 
+. ** Subjective Social Status
+. recode a17n (97/99=.), gen(subjective_status)
+(58 differences between a17n and subjective_status)
+
+. 
+. ** Happiness
+. recode b27n1 (1=4)(2=3)(3=2)(4=1)(96/99=.), gen(happiness)
+(1955 differences between b27n1 and happiness)
+
+. label define happiness 1"Very unhappy" 2"Somewhat unhappy" 3"Somewhat happy" 4"Very happy"
+
+. label value happiness happiness
+
+. 
+. gen happy = happiness >= 3 if happiness != .
+(5 missing values generated)
+
+. 
+. ** Health
+. recode b27 (1=5)(2=1)(3=3)(4=2)(5=1), gen(healthness)
+(936 differences between b27 and healthness)
+
+. label define healthness 1"Poor" 2"Fair" 3"Good" 4"Very good" 5"Excellent"
+
+. label value healthness healthness
+
+. 
+. recode b28a (94/99=.), gen(depress1)
+(3 differences between b28a and depress1)
+
+. recode b28b (94/99=.), gen(depress2)
+(7 differences between b28b and depress2)
+
+. recode b28c (94/99=.), gen(depress3)
+(7 differences between b28c and depress3)
+
+. alpha depress*
+
+Test scale = mean(unstandardized items)
+
+Average interitem covariance:     .6840739
+Number of items in the scale:            3
+Scale reliability coefficient:      0.8600
+
+. egen depression = rowmean(depress*)
+(3 missing values generated)
+
+. 
+. ** Loneliness
+. /*  In the past four weeks, how often have you felt...
+> A. lack companionship?
+> B. left out?
+> C. excluded?
+> D. that your family and friends are doing better than you?
+> */
+. recode b9a (94/99=.), gen(lack_companionship)
+(2 differences between b9a and lack_companionship)
+
+. recode b9b (94/99=.), gen(lonely)
+(4 differences between b9b and lonely)
+
+. recode b9c (94/99=.), gen(excluded)
+(8 differences between b9c and excluded)
+
+. recode b9d (94/99=.), gen(less_than_others)
+(16 differences between b9d and less_than_others)
+
+. tabm lack_companionship lonely excluded less_than_others
+
+                      |                         values
+             variable |         1          2          3          4          5 |     Total
+----------------------+-------------------------------------------------------+----------
+ RECODE of b9a (B9 過 |     1,333        357        190         51         22 |     1,953 
+ RECODE of b9b (B9 過 |     1,344        353        187         45         22 |     1,951 
+ RECODE of b9c (B9 過 |     1,543        311         71         16          6 |     1,947 
+ RECODE of b9d (B9 過 |     1,195        398        256         63         27 |     1,939 
+----------------------+-------------------------------------------------------+----------
+                Total |     5,415      1,419        704        175         77 |     7,790 
+
+. alpha lack_companionship lonely excluded, std item detail
+
+Test scale = mean(standardized items)
+
+                                                            Average
+                             Item-test     Item-rest       interitem
+Item         |  Obs  Sign   correlation   correlation     correlation     alpha
+-------------+-----------------------------------------------------------------
+lack_compa~p | 1953    +       0.8784        0.7123          0.4949      0.6621
+lonely       | 1951    +       0.9079        0.7753          0.4195      0.5911
+excluded     | 1947    +       0.7543        0.4807          0.8103      0.8952
+-------------+-----------------------------------------------------------------
+Test scale   |                                               0.5752      0.8024
+-------------------------------------------------------------------------------
+
+Interitem correlations (obs=pairwise, see below)
+
+                    lack_companionship              lonely            excluded
+lack_companionship              1.0000
+            lonely              0.8103              1.0000
+          excluded              0.4195              0.4949              1.0000
+
+Pairwise number of observations
+
+                    lack_companionship              lonely            excluded
+lack_companionship                1953
+            lonely                1951                1951
+          excluded                1946                1944                1947
+
+. egen loneliness = rowmean(lack_companionship lonely excluded)
+(1 missing value generated)
+
+. lab var loneliness "3 items loneliness scale"
+
+. 
+. ** Daily Contact
+. recode b19 (0 1=1)(94/99=.), gen(contact6)
+(11 differences between b19 and contact6)
+
+. lab define contact6 1"0~4" 2"5~9" 3"10~19" 4"20~49" 5"50~99" 6"100 and above"
+
+. lab value contact6 contact6
+
+. 
+. recode b19 (0 1 2=1)(3=2)(4=3)(5 6=4)(94/99=.), gen(contact4)
+(1753 differences between b19 and contact4)
+
+. lab define contact4 1"below 10" 2"10~19" 3"20~49" 4"50 and above"
+
+. lab value contact4 contact4
+
+. 
+. ** Internet (f22-f26)
+. gen online_time = f22h + (f22m / 60)
+
+. replace online_time = . if f22h > 90 | f22m > 90
+(184 real changes made, 184 to missing)
+
+. replace online_time = 0 if f22h == 96 & f22m == 96 // unable to use the Internet or computers
+(182 real changes made)
+
+. lab var online_time "how much time do you spend online per day? (unit: hour)"
+
+. 
+. ** Network Size
+. recode c1 (94/99=.), gen(pernet_size)
+(7 differences between c1 and pernet_size)
+
+. recode d1 (94/99=.), gen(emonet_size)
+(9 differences between d1 and emonet_size)
+
+. 
+. ** Network Pressure (b14-b16)
+. recode b14 (94/99=.), gen(family_stress)
+(2 differences between b14 and family_stress)
+
+. recode b15 (94/99=.), gen(family_demand)
+(5 differences between b15 and family_demand)
+
+. recode b16 (94/99=.), gen(others_mood)
+(10 differences between b16 and others_mood)
+
+. recode b16n1 (1=5)(2=4)(3=3)(4=2)(5=1)(94/99=.), gen(relation_burden)
+(1738 differences between b16n1 and relation_burden)
+
+. tabm family_stress family_demand others_mood relation_burden, m
+
+                      |                              values
+             variable |         1          2          3          4          5          . |     Total
+----------------------+------------------------------------------------------------------+----------
+RECODE of b14 (B14 您 |       959        530        360         73         31          2 |     1,955 
+RECODE of b15 (B15 請 |     1,071        548        271         43         17          5 |     1,955 
+RECODE of b16 (B16 請 |       938        644        294         50         19         10 |     1,955 
+RECODE of b16n1 (B16n |     1,060        619        217         39         14          6 |     1,955 
+----------------------+------------------------------------------------------------------+----------
+                Total |     4,028      2,341      1,142        205         81         23 |     7,820 
+
+. alpha family_stress family_demand others_mood relation_burden, std item detail
+
+Test scale = mean(standardized items)
+
+                                                            Average
+                             Item-test     Item-rest       interitem
+Item         |  Obs  Sign   correlation   correlation     correlation     alpha
+-------------+-----------------------------------------------------------------
+family_str~s | 1953    +       0.8182        0.6493          0.3926      0.6598
+family_dem~d | 1950    +       0.8222        0.6565          0.3891      0.6565
+others_mood  | 1945    +       0.7532        0.5436          0.4599      0.7186
+relation_b~n | 1949    +       0.6690        0.4174          0.5465      0.7833
+-------------+-----------------------------------------------------------------
+Test scale   |                                               0.4471      0.7638
+-------------------------------------------------------------------------------
+
+Interitem correlations (obs=pairwise, see below)
+
+                   family_stress    family_demand      others_mood  relation_burden
+  family_stress           1.0000
+  family_demand           0.6723           1.0000
+    others_mood           0.4697           0.4971           1.0000
+relation_burden           0.3619           0.3450           0.3356           1.0000
+
+Pairwise number of observations
+
+                   family_stress    family_demand      others_mood  relation_burden
+  family_stress             1953
+  family_demand             1949             1950
+    others_mood             1944             1943             1945
+relation_burden             1947             1944             1939             1949
+
+. egen relation_pressure = rowmean(family_stress family_demand others_mood relation_burden)
+
+. egen network_pressure = rowmean(others_mood relation_burden)
+
+. 
+. ** Contact Frequency (with thec closest friends)
+. recode b25 (90=0)(91=8)(1=9)(2=7)(3=6)(4=5)(5=4)(6=3)(7=2)(8=1)(96/98=.), gen(friend_contact_freq)
+(1955 differences between b25 and friend_contact_freq)
+
+. lab define friend_contact_freq 0"I have no close friends" 1"Never contact" 2"Once a year or less" 3"Several times a year" 4"Once a m
+> onth" 5"Two to three times a month" 6"Once a week" 7"Several times a week" 8"The closest friend I regularly contact lives with me" 9
+> "Every day" 
+
+. lab value friend_contact_freq friend_contact_freq
+
+. 
+. ** Personality
+. * Independence
+. foreach i in b7a b7b b7c b7d b7e b8a b8b b8c b8d b8e {
+  2.         gen `i'_no = `i' == 7 if `i' < 90 
+  3. }
+(6 missing values generated)
+(12 missing values generated)
+(11 missing values generated)
+(30 missing values generated)
+(17 missing values generated)
+(70 missing values generated)
+(87 missing values generated)
+(22 missing values generated)
+(64 missing values generated)
+(8 missing values generated)
+
+. egen independence = rowmean(b7a_no-b8e_no)
+(1 missing value generated)
+
+. drop b7*_no b8*_no
+
+. 
+. * Socializing Frequency
+. recode b17 (1 2=4)(3 4=3)(5 6=2)(7 8=1)(94/99=.), gen(socializing_freq)
+(1763 differences between b17 and socializing_freq)
+
+. lab define socializing_freq 1"Rare (Once a year or less, or never)" 2"Infrequent (once a month or several times a year)" 3"Frequent 
+> (once a week or two to three times a month)" 4"Very frequent (overy day or several times a week)"
+
+. lab value socializing_freq socializing_freq
+
+. 
+. * Outgoing
+. recode f18a (94/99=.), gen(talkative)
+(3 differences between f18a and talkative)
+
+. recode f18b (1=5)(2=4)(3=3)(4=2)(5=1)(94/99=.), gen(extravert)
+(1852 differences between f18b and extravert)
+
+. tabm talkative extravert
+
+                      |                         values
+             variable |         1          2          3          4          5 |     Total
+----------------------+-------------------------------------------------------+----------
+ RECODE of f18a (F18  |       190        668         91        666        337 |     1,952 
+ RECODE of f18b (F18  |       100        667        103        734        344 |     1,948 
+----------------------+-------------------------------------------------------+----------
+                Total |       290      1,335        194      1,400        681 |     3,900 
+
+. egen outgoing = rowmean(talkative extravert)
+(2 missing values generated)
+
+. lab var outgoing "Talkative and extravert"
+
+. 
+. * Trust
+. recode b11 (1=4)(2=3)(3=2)(4=1)(94/99=.), gen(trust)
+(1955 differences between b11 and trust)
+
+.  
+. tab socializing_freq outgoing, chi
+
+   RECODE of b17 (B17 |
+       除了家人親戚以 |
+        外,您多常和三 |
+       個或以上的朋友 |
+       在外聚餐或喝酒 |                                      Talkative and extravert
+       ,喝茶,喝咖啡?) |         1        1.5          2        2.5          3        3.5          4        4.5          5 |     Total
+----------------------+---------------------------------------------------------------------------------------------------+----------
+Rare (Once a year or  |        29         48        164         28        112         18        100         35         35 |       569 
+Infrequent (once a mo |        21         50        172         31        149         29        150         84         68 |       754 
+Frequent (once a week |        10         17         57         13         95         23        108         61         78 |       462 
+Very frequent (overy  |         0         11         13          6         26          5         43         24         38 |       166 
+----------------------+---------------------------------------------------------------------------------------------------+----------
+                Total |        60        126        406         78        382         75        401        204        219 |     1,951 
+
+         Pearson chi2(24) = 151.1449   Pr = 0.000
+
+. tab trust outgoing, chi
+
+ RECODE of |
+  b11 (B11 |
+    您認為 |
+    一般人 |
+    都可以 |
+   信任,還 |
+    是您覺 |
+    得跟人 |
+    交往要 |
+    小心一 |
+    點比較 |                                      Talkative and extravert
+      好?) |         1        1.5          2        2.5          3        3.5          4        4.5          5 |     Total
+-----------+---------------------------------------------------------------------------------------------------+----------
+         1 |        12         19         37         14         47         14         50         22         30 |       245 
+         2 |        33         67        253         45        200         40        208        107        111 |     1,064 
+         3 |        13         32        100         14        116         17        126         65         60 |       543 
+         4 |         2          7         12          5         17          1         13          9         18 |        84 
+-----------+---------------------------------------------------------------------------------------------------+----------
+     Total |        60        125        402         78        380         72        397        203        219 |     1,936 
+
+         Pearson chi2(24) =  41.6711   Pr = 0.014
+
+. 
+. // des, simple
+. 
+. rename id ego_id
+
+. 
+. /********************/
+. // Run only for Network size >= 1
+. preserve
+
+. drop if pernet_size == 0
+(665 observations deleted)
+
+. drop if pernet_size == 0
+(0 observations deleted)
+
+. keep ego_id region female-trust wsel
+
+. save ego_data.dta, replace
+file ego_data.dta saved
+
+. restore
+
+. /********************/
+. 
+. /********************/
+. // Run for All
+. preserve
+
+. keep ego_id region female-trust wsel
+
+. save ego_data_full.dta, replace
+(file ego_data_full.dta not found)
+file ego_data_full.dta saved
+
+. restore
+
+. /********************/
+. 
+. mdesc
+
+    Variable    |     Missing          Total     Percent Missing
+----------------+-----------------------------------------------
+         ego_id |           0          1,955           0.00
+            zip |           0          1,955           0.00
+       stratum2 |           0          1,955           0.00
+         region |           0          1,955           0.00
+    stratum2014 |           0          1,955           0.00
+     region2014 |           0          1,955           0.00
+   r_strat~2014 |           0          1,955           0.00
+            psu |           0          1,955           0.00
+            ssu |          51          1,955           2.61
+          wsel0 |           0          1,955           0.00
+           wsel |           0          1,955           0.00
+        wr_19_4 |           0          1,955           0.00
+        wr_19_5 |           0          1,955           0.00
+           wave |           0          1,955           0.00
+          qtype |           0          1,955           0.00
+           year |           0          1,955           0.00
+         year_m |           0          1,955           0.00
+           sdt1 |           0          1,955           0.00
+           sdt2 |           0          1,955           0.00
+             a1 |           0          1,955           0.00
+            a2y |           0          1,955           0.00
+            a2m |           0          1,955           0.00
+            a2r |           0          1,955           0.00
+         a3city |           0          1,955           0.00
+          a3zip |           0          1,955           0.00
+             a4 |           0          1,955           0.00
+         a4city |           0          1,955           0.00
+          a4zip |           0          1,955           0.00
+             a5 |           0          1,955           0.00
+             a6 |           0          1,955           0.00
+            ka6 |           0          1,955           0.00
+             a7 |           0          1,955           0.00
+            ka7 |           0          1,955           0.00
+             a8 |           0          1,955           0.00
+            ka8 |           0          1,955           0.00
+             a9 |           0          1,955           0.00
+            ka9 |           0          1,955           0.00
+            a10 |           0          1,955           0.00
+           ka10 |           0          1,955           0.00
+            a11 |           0          1,955           0.00
+           ka11 |           0          1,955           0.00
+            a12 |           0          1,955           0.00
+            a13 |           0          1,955           0.00
+            a14 |           0          1,955           0.00
+            a15 |           0          1,955           0.00
+           ka15 |           0          1,955           0.00
+            a16 |           0          1,955           0.00
+           ka16 |           0          1,955           0.00
+            a17 |           0          1,955           0.00
+           b1a1 |           0          1,955           0.00
+           b1a2 |           0          1,955           0.00
+           b1a3 |           0          1,955           0.00
+           b1b1 |           0          1,955           0.00
+           b1b2 |           0          1,955           0.00
+           b1b3 |           0          1,955           0.00
+           b1c1 |           0          1,955           0.00
+           b1c2 |           0          1,955           0.00
+           b1c3 |           0          1,955           0.00
+           b1d1 |           0          1,955           0.00
+           b1d2 |           0          1,955           0.00
+           b1d3 |           0          1,955           0.00
+           b1e1 |           0          1,955           0.00
+           b1e2 |           0          1,955           0.00
+           b1e3 |           0          1,955           0.00
+           b1f1 |           0          1,955           0.00
+           b1f2 |           0          1,955           0.00
+           b1f3 |           0          1,955           0.00
+           b1g1 |           0          1,955           0.00
+           b1g2 |           0          1,955           0.00
+           b1g3 |           0          1,955           0.00
+           b1h1 |           0          1,955           0.00
+           b1h2 |           0          1,955           0.00
+           b1h3 |           0          1,955           0.00
+           b1i1 |           0          1,955           0.00
+           b1i2 |           0          1,955           0.00
+           b1i3 |           0          1,955           0.00
+           b1j1 |           0          1,955           0.00
+           b1j2 |           0          1,955           0.00
+           b1j3 |           0          1,955           0.00
+           b1k1 |           0          1,955           0.00
+           b1k2 |           0          1,955           0.00
+           b1k3 |           0          1,955           0.00
+           b1l1 |           0          1,955           0.00
+           b1l2 |           0          1,955           0.00
+           b1l3 |           0          1,955           0.00
+           b1m1 |           0          1,955           0.00
+           b1m2 |           0          1,955           0.00
+           b1m3 |           0          1,955           0.00
+           b1n1 |           0          1,955           0.00
+           b1n2 |           0          1,955           0.00
+           b1n3 |           0          1,955           0.00
+           b1o1 |           0          1,955           0.00
+           b1o2 |           0          1,955           0.00
+           b1o3 |           0          1,955           0.00
+           b1p1 |           0          1,955           0.00
+           b1p2 |           0          1,955           0.00
+           b1p3 |           0          1,955           0.00
+            b2a |           0          1,955           0.00
+            b2b |           0          1,955           0.00
+            b2c |           0          1,955           0.00
+            b2d |           0          1,955           0.00
+             b3 |           0          1,955           0.00
+             b4 |           0          1,955           0.00
+            b5a |           0          1,955           0.00
+            b5b |           0          1,955           0.00
+            b5c |           0          1,955           0.00
+           b5n1 |           0          1,955           0.00
+             b6 |           0          1,955           0.00
+            b7a |           0          1,955           0.00
+            b7b |           0          1,955           0.00
+            b7c |           0          1,955           0.00
+            b7d |           0          1,955           0.00
+            b7e |           0          1,955           0.00
+            b8a |           0          1,955           0.00
+            b8b |           0          1,955           0.00
+            b8c |           0          1,955           0.00
+            b8d |           0          1,955           0.00
+            b8e |           0          1,955           0.00
+            b9a |           0          1,955           0.00
+            b9b |           0          1,955           0.00
+            b9c |           0          1,955           0.00
+            b9d |           0          1,955           0.00
+            b10 |           0          1,955           0.00
+            b11 |           0          1,955           0.00
+           b12a |           0          1,955           0.00
+           b12b |           0          1,955           0.00
+           b13a |           0          1,955           0.00
+           b13b |           0          1,955           0.00
+           b13c |           0          1,955           0.00
+            b14 |           0          1,955           0.00
+            b15 |           0          1,955           0.00
+            b16 |           0          1,955           0.00
+          b16n1 |           0          1,955           0.00
+            b17 |           0          1,955           0.00
+           b18a |           0          1,955           0.00
+           b18b |           0          1,955           0.00
+           b18c |           0          1,955           0.00
+            b19 |           0          1,955           0.00
+            b20 |           0          1,955           0.00
+          b20n1 |           0          1,955           0.00
+            b21 |           0          1,955           0.00
+            b22 |           0          1,955           0.00
+            b23 |           0          1,955           0.00
+            b24 |           0          1,955           0.00
+            b25 |           0          1,955           0.00
+            b26 |           0          1,955           0.00
+            b27 |           0          1,955           0.00
+          b27n1 |           0          1,955           0.00
+           b28a |           0          1,955           0.00
+           b28b |           0          1,955           0.00
+           b28c |           0          1,955           0.00
+            b29 |           0          1,955           0.00
+            b30 |           0          1,955           0.00
+            b31 |           0          1,955           0.00
+            b32 |           0          1,955           0.00
+             c1 |           0          1,955           0.00
+           c21a |           0          1,955           0.00
+          kc21a |           0          1,955           0.00
+           c21b |           0          1,955           0.00
+          kc21b |           0          1,955           0.00
+           c21c |           0          1,955           0.00
+           c21d |           0          1,955           0.00
+           c21e |           0          1,955           0.00
+          kc21e |           0          1,955           0.00
+           c21f |           0          1,955           0.00
+          kc21f |           0          1,955           0.00
+           c21g |           0          1,955           0.00
+           c21h |           0          1,955           0.00
+           c21i |           0          1,955           0.00
+           c22a |           0          1,955           0.00
+          kc22a |           0          1,955           0.00
+           c22b |           0          1,955           0.00
+          kc22b |           0          1,955           0.00
+           c22c |           0          1,955           0.00
+           c22d |           0          1,955           0.00
+           c22e |           0          1,955           0.00
+          kc22e |           0          1,955           0.00
+           c22f |           0          1,955           0.00
+          kc22f |           0          1,955           0.00
+           c22g |           0          1,955           0.00
+           c22h |           0          1,955           0.00
+           c22i |           0          1,955           0.00
+           c23a |           0          1,955           0.00
+          kc23a |           0          1,955           0.00
+           c23b |           0          1,955           0.00
+          kc23b |           0          1,955           0.00
+           c23c |           0          1,955           0.00
+           c23d |           0          1,955           0.00
+           c23e |           0          1,955           0.00
+          kc23e |           0          1,955           0.00
+           c23f |           0          1,955           0.00
+          kc23f |           0          1,955           0.00
+           c23g |           0          1,955           0.00
+           c23h |           0          1,955           0.00
+           c23i |           0          1,955           0.00
+           c24a |           0          1,955           0.00
+          kc24a |           0          1,955           0.00
+           c24b |           0          1,955           0.00
+          kc24b |           0          1,955           0.00
+           c24c |           0          1,955           0.00
+           c24d |           0          1,955           0.00
+           c24e |           0          1,955           0.00
+          kc24e |           0          1,955           0.00
+           c24f |           0          1,955           0.00
+          kc24f |           0          1,955           0.00
+           c24g |           0          1,955           0.00
+           c24h |           0          1,955           0.00
+           c24i |           0          1,955           0.00
+           c25a |           0          1,955           0.00
+          kc25a |           0          1,955           0.00
+           c25b |           0          1,955           0.00
+          kc25b |           0          1,955           0.00
+           c25c |           0          1,955           0.00
+           c25d |           0          1,955           0.00
+           c25e |           0          1,955           0.00
+          kc25e |           0          1,955           0.00
+           c25f |           0          1,955           0.00
+          kc25f |           0          1,955           0.00
+           c25g |           0          1,955           0.00
+           c25h |           0          1,955           0.00
+           c25i |           0          1,955           0.00
+           c312 |           0          1,955           0.00
+           c313 |           0          1,955           0.00
+           c314 |           0          1,955           0.00
+           c315 |           0          1,955           0.00
+           c323 |           0          1,955           0.00
+           c324 |           0          1,955           0.00
+           c325 |           0          1,955           0.00
+           c334 |           0          1,955           0.00
+           c335 |           0          1,955           0.00
+           c345 |           0          1,955           0.00
+             d1 |           0          1,955           0.00
+           d210 |           0          1,955           0.00
+           d21a |           0          1,955           0.00
+          kd21a |           0          1,955           0.00
+           d21b |           0          1,955           0.00
+          kd21b |           0          1,955           0.00
+           d21c |           0          1,955           0.00
+           d21d |           0          1,955           0.00
+           d21e |           0          1,955           0.00
+          kd21e |           0          1,955           0.00
+           d21f |           0          1,955           0.00
+          kd21f |           0          1,955           0.00
+           d21g |           0          1,955           0.00
+           d21h |           0          1,955           0.00
+           d21i |           0          1,955           0.00
+           d220 |           0          1,955           0.00
+           d22a |           0          1,955           0.00
+          kd22a |           0          1,955           0.00
+           d22b |           0          1,955           0.00
+          kd22b |           0          1,955           0.00
+           d22c |           0          1,955           0.00
+           d22d |           0          1,955           0.00
+           d22e |           0          1,955           0.00
+          kd22e |           0          1,955           0.00
+           d22f |           0          1,955           0.00
+          kd22f |           0          1,955           0.00
+           d22g |           0          1,955           0.00
+           d22h |           0          1,955           0.00
+           d22i |           0          1,955           0.00
+           d230 |           0          1,955           0.00
+           d23a |           0          1,955           0.00
+          kd23a |           0          1,955           0.00
+           d23b |           0          1,955           0.00
+          kd23b |           0          1,955           0.00
+           d23c |           0          1,955           0.00
+           d23d |           0          1,955           0.00
+           d23e |           0          1,955           0.00
+          kd23e |           0          1,955           0.00
+           d23f |           0          1,955           0.00
+          kd23f |           0          1,955           0.00
+           d23g |           0          1,955           0.00
+           d23h |           0          1,955           0.00
+           d23i |           0          1,955           0.00
+           d240 |           0          1,955           0.00
+           d24a |           0          1,955           0.00
+          kd24a |           0          1,955           0.00
+           d24b |           0          1,955           0.00
+          kd24b |           0          1,955           0.00
+           d24c |           0          1,955           0.00
+           d24d |           0          1,955           0.00
+           d24e |           0          1,955           0.00
+          kd24e |           0          1,955           0.00
+           d24f |           0          1,955           0.00
+          kd24f |           0          1,955           0.00
+           d24g |           0          1,955           0.00
+           d24h |           0          1,955           0.00
+           d24i |           0          1,955           0.00
+           d250 |           0          1,955           0.00
+           d25a |           0          1,955           0.00
+          kd25a |           0          1,955           0.00
+           d25b |           0          1,955           0.00
+          kd25b |           0          1,955           0.00
+           d25c |           0          1,955           0.00
+           d25d |           0          1,955           0.00
+           d25e |           0          1,955           0.00
+          kd25e |           0          1,955           0.00
+           d25f |           0          1,955           0.00
+          kd25f |           0          1,955           0.00
+           d25g |           0          1,955           0.00
+           d25h |           0          1,955           0.00
+           d25i |           0          1,955           0.00
+           d312 |           0          1,955           0.00
+           d313 |           0          1,955           0.00
+           d314 |           0          1,955           0.00
+           d315 |           0          1,955           0.00
+           d323 |           0          1,955           0.00
+           d324 |           0          1,955           0.00
+           d325 |           0          1,955           0.00
+           d334 |           0          1,955           0.00
+           d335 |           0          1,955           0.00
+           d345 |           0          1,955           0.00
+             e1 |           0          1,955           0.00
+             e2 |           0          1,955           0.00
+             e3 |           0          1,955           0.00
+             e4 |           0          1,955           0.00
+             e5 |           0          1,955           0.00
+             e6 |           0          1,955           0.00
+             e7 |           0          1,955           0.00
+             e8 |           0          1,955           0.00
+             f1 |           0          1,955           0.00
+            f2a |           0          1,955           0.00
+            f2b |           0          1,955           0.00
+            f2c |           0          1,955           0.00
+             f3 |           0          1,955           0.00
+            kf3 |           0          1,955           0.00
+             f4 |           0          1,955           0.00
+             f5 |           0          1,955           0.00
+           f6a3 |           0          1,955           0.00
+           f6b4 |           0          1,955           0.00
+           f6b5 |           0          1,955           0.00
+     f6b5isco88 |           0          1,955           0.00
+            f6c |           0          1,955           0.00
+             f7 |           0          1,955           0.00
+            kf7 |           0          1,955           0.00
+            f7a |           0          1,955           0.00
+             f8 |           0          1,955           0.00
+             f9 |           0          1,955           0.00
+            f10 |           0          1,955           0.00
+           kf10 |           0          1,955           0.00
+            f11 |           0          1,955           0.00
+            f12 |           0          1,955           0.00
+          f13a3 |           0          1,955           0.00
+          f13b4 |           0          1,955           0.00
+          f13b5 |           0          1,955           0.00
+    f13b5isco88 |           0          1,955           0.00
+           f13c |           0          1,955           0.00
+            f14 |           0          1,955           0.00
+           kf14 |           0          1,955           0.00
+            f15 |           0          1,955           0.00
+            f16 |           0          1,955           0.00
+            f17 |           0          1,955           0.00
+           f18a |           0          1,955           0.00
+           f18b |           0          1,955           0.00
+           f19a |           0          1,955           0.00
+           f19b |           0          1,955           0.00
+           f19c |           0          1,955           0.00
+            f20 |           0          1,955           0.00
+            f21 |           0          1,955           0.00
+           f22h |           0          1,955           0.00
+           f22m |           0          1,955           0.00
+            f23 |           0          1,955           0.00
+            f24 |           0          1,955           0.00
+            f25 |           0          1,955           0.00
+            f26 |           0          1,955           0.00
+            f27 |           0          1,955           0.00
+            f28 |           0          1,955           0.00
+          phone |           0          1,955           0.00
+           cell |           0          1,955           0.00
+            f29 |           0          1,955           0.00
+           edt1 |           0          1,955           0.00
+           edt2 |           0          1,955           0.00
+         a4zipn |           0          1,955           0.00
+           a17n |           0          1,955           0.00
+          c21hn |           0          1,955           0.00
+          c22hn |           0          1,955           0.00
+          c23hn |           0          1,955           0.00
+          c24hn |           0          1,955           0.00
+          c25hn |           0          1,955           0.00
+          d21hn |           0          1,955           0.00
+          d22hn |           0          1,955           0.00
+          d23hn |           0          1,955           0.00
+          d24hn |           0          1,955           0.00
+          d25hn |           0          1,955           0.00
+         female |           0          1,955           0.00
+          byear |           2          1,955           0.10
+         bmonth |          11          1,955           0.56
+          bdate |          11          1,955           0.56
+          syear |           0          1,955           0.00
+          sdate |           0          1,955           0.00
+            age |           1          1,955           0.05
+      age_conti |           1          1,955           0.05
+           age2 |           1          1,955           0.05
+         agecat |           1          1,955           0.05
+         educat |           0          1,955           0.00
+        eduyear |           0          1,955           0.00
+   eduyear_self |           0          1,955           0.00
+   residence_~e |          12          1,955           0.61
+          urban |          12          1,955           0.61
+       religion |           1          1,955           0.05
+   religion_f~q |           0          1,955           0.00
+         ethnic |           8          1,955           0.41
+        marital |           2          1,955           0.10
+   living_mem~e |          34          1,955           1.74
+   living_alone |          34          1,955           1.74
+   living_pre~m |           7          1,955           0.36
+   living_chi~m |           7          1,955           0.36
+     employment |           0          1,955           0.00
+   employment~t |           0          1,955           0.00
+       employed |           0          1,955           0.00
+        rincome |          99          1,955           5.06
+      lnrincome |          99          1,955           5.06
+        hincome |         526          1,955          26.91
+   subjective~s |          58          1,955           2.97
+      happiness |           5          1,955           0.26
+          happy |           5          1,955           0.26
+     healthness |           0          1,955           0.00
+       depress1 |           3          1,955           0.15
+       depress2 |           7          1,955           0.36
+       depress3 |           7          1,955           0.36
+     depression |           3          1,955           0.15
+   lack_compa~p |           2          1,955           0.10
+         lonely |           4          1,955           0.20
+       excluded |           8          1,955           0.41
+   less_than_~s |          16          1,955           0.82
+     loneliness |           1          1,955           0.05
+       contact6 |           6          1,955           0.31
+       contact4 |           6          1,955           0.31
+    online_time |           2          1,955           0.10
+    pernet_size |           7          1,955           0.36
+    emonet_size |           9          1,955           0.46
+   family_str~s |           2          1,955           0.10
+   family_dem~d |           5          1,955           0.26
+    others_mood |          10          1,955           0.51
+   relation_b~n |           6          1,955           0.31
+   relation_p~e |           0          1,955           0.00
+   network_pr~e |           0          1,955           0.00
+   friend_con~q |           1          1,955           0.05
+   independence |           1          1,955           0.05
+   socializin~q |           2          1,955           0.10
+      talkative |           3          1,955           0.15
+      extravert |           7          1,955           0.36
+       outgoing |           2          1,955           0.10
+          trust |          17          1,955           0.87
+----------------+-----------------------------------------------
+
+. 
+. **#**************** Alter data ******************
+. 
+. ///// Personal Social Network /////
+> 
+. ** Relationship with ego
+. #delimit ;
+delimiter now ;
+. lab define alter_rel_raw
+> 1"Spouse"
+> 2"Own parent"
+> 3"Parent-in-law"
+> 4"Children"
+> 5"Sibling"
+> 6"Daughter-in-law"
+> 7"Son-in-law" 
+> 8"Other relative"
+> 9"Former neighbor"
+> 10"Current neighbor"
+> 11"Classmate"
+> 12"Teacher"
+> 13"Student"
+> 14"Former colleague"
+> 15"Current colleague"
+> 16"Supervisor"
+> 17"Subordinate"
+> 18"Fellow members of social group"
+> 19"Fellow members of religious group"
+> 20"Close friend"
+> 21"Ordinary friend"
+> 22"Customer"
+> 23"Fellow villager"
+> 24"Other" ;
+
+. #delimit cr
+delimiter now cr
+. 
+. lab define alter_rel 1"Family members" 2"Friends" 3"Educational connections" 4"Professional connections" 5"Social-religious group an
+> d neighbors"
+
+. 
+. #delimit ;
+delimiter now ;
+. lab define alter_rel2
+> 1"Spouse"
+> 2"Own parent"
+> 3"Children"
+> 4"Sibling"
+> 5"In-laws"
+> 6"Other relative"
+> 7"Friends" 
+> 8"Educational connections" 
+> 9"Professional connections" 
+> 10"Social-religious group and neighbors" ;
+
+. #delimit cr
+delimiter now cr
+. 
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'a (94/99=.), gen(alter`i'_rel_raw)
+  3.         lab value alter`i'_rel_raw alter_rel_raw
+  4.         
+.         recode c2`i'a (1 2 3 4 5 6 7 8=1)(20 21=2)(11 12 13=3)(14 15 16 17 22=4)(9 10 18 19 23=5)(94/99=.), gen(alter`i'_rel)
+  5.         lab value alter`i'_rel alter_rel
+  6.         
+.         recode c2`i'a (1=1)(2=2)(4=3)(5=4)(3 6 7=5)(8=6)(20 21=7)(11 12 13=8)(14 15 16 17 22=9)(9 10 18 19 23=10)(94/99=.), gen(alte
+> r`i'_rel2)
+  7.         lab value alter`i'_rel2 alter_rel2
+  8. }
+(678 differences between c21a and alter1_rel_raw)
+(1522 differences between c21a and alter1_rel)
+(1267 differences between c21a and alter1_rel2)
+(942 differences between c22a and alter2_rel_raw)
+(1907 differences between c22a and alter2_rel)
+(1701 differences between c22a and alter2_rel2)
+(1209 differences between c23a and alter3_rel_raw)
+(1924 differences between c23a and alter3_rel)
+(1850 differences between c23a and alter3_rel2)
+(1461 differences between c24a and alter4_rel_raw)
+(1944 differences between c24a and alter4_rel)
+(1900 differences between c24a and alter4_rel2)
+(1576 differences between c25a and alter5_rel_raw)
+(1946 differences between c25a and alter5_rel)
+(1925 differences between c25a and alter5_rel2)
+
+. 
+. ** How did they meet
+. #delimit ;
+delimiter now ;
+. lab define alter_meet_raw
+> 1"Blood relatives"
+> 2"In-laws"
+> 3"Neighbors"
+> 4"Elementary school classmates"
+> 5"Junior high/middle school classmates"
+> 6"High school/vocational school classmates"
+> 7"College/university classmates"
+> 8"Teachers and students relationship"
+> 9"Workplace"
+> 10"Club members"
+> 11"Religious groups"
+> 12"Introduced by others"
+> 13"Participating in common activities"
+> 14"Other" ;
+
+. #delimit cr
+delimiter now cr
+. 
+. lab define alter_meet 1"Family" 2"School" 3"Workplace" 4"Social/Religious group and Neighbors" 5"Introduced by others"
+
+. 
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'b (94/99=.), gen(alter`i'_meet_raw)
+  3.         lab value alter`i'_meet_raw alter_meet_raw
+  4.         
+.         recode c2`i'b (1 2=1)(4/8=2)(9=3)(3 10 11 13=4)(12=5)(94/99=.), gen(alter`i'_meet)
+  5.         lab value alter`i'_meet alter_meet
+  6. }
+(680 differences between c21b and alter1_meet_raw)
+(1483 differences between c21b and alter1_meet)
+(942 differences between c22b and alter2_meet_raw)
+(1421 differences between c22b and alter2_meet)
+(1210 differences between c23b and alter3_meet_raw)
+(1641 differences between c23b and alter3_meet)
+(1461 differences between c24b and alter4_meet_raw)
+(1788 differences between c24b and alter4_meet)
+(1576 differences between c25b and alter5_meet_raw)
+(1858 differences between c25b and alter5_meet)
+
+. 
+. ** Gender
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'c (2=1)(1=0)(94/99=.), gen(alter`i'_female)
+  3. }
+(1955 differences between c21c and alter1_female)
+(1955 differences between c22c and alter2_female)
+(1955 differences between c23c and alter3_female)
+(1955 differences between c24c and alter4_female)
+(1955 differences between c25c and alter5_female)
+
+. 
+. ** Age
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'd (94/99=.), gen(alter`i'_age)
+  3.         
+.         recode c2`i'd (1/30=1)(31/40=2)(41/50=3)(51/60=4)(61/70=5)(71/95=6)(94/99=.), gen(alter`i'_agecat)
+  4.         lab value alter`i'_agecat agecat
+  5. }
+(685 differences between c21d and alter1_age)
+(1955 differences between c21d and alter1_agecat)
+(943 differences between c22d and alter2_age)
+(1955 differences between c22d and alter2_agecat)
+(1210 differences between c23d and alter3_age)
+(1955 differences between c23d and alter3_agecat)
+(1465 differences between c24d and alter4_age)
+(1955 differences between c24d and alter4_agecat)
+(1580 differences between c25d and alter5_age)
+(1955 differences between c25d and alter5_agecat)
+
+. 
+. ** Marital
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'e (1=1)(2=2)(3 4=3)(5 94/99=.), gen(alter`i'_marital)
+  3.         label value alter`i'_marital marital
+  4. }
+(729 differences between c21e and alter1_marital)
+(978 differences between c22e and alter2_marital)
+(1223 differences between c23e and alter3_marital)
+(1466 differences between c24e and alter4_marital)
+(1587 differences between c25e and alter5_marital)
+
+. 
+. ** Ethincity
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'f (1=1)(2=2)(3=3)(4=4)(5 94/99=.), gen(alter`i'_ethnicity)
+  3.         lab value alter`i'_ethnicity ethnic 
+  4. }
+(724 differences between c21f and alter1_ethnicity)
+(989 differences between c22f and alter2_ethnicity)
+(1244 differences between c23f and alter3_ethnicity)
+(1484 differences between c24f and alter4_ethnicity)
+(1595 differences between c25f and alter5_ethnicity)
+
+. 
+. ** Education
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'g (1=1)(2=2)(3=3)(4=4)(5=5)(6=6)(7 94/99=.), gen(alter`i'_educat)
+  3.         lab value alter`i'_educat educat
+  4. }
+(717 differences between c21g and alter1_educat)
+(974 differences between c22g and alter2_educat)
+(1237 differences between c23g and alter3_educat)
+(1481 differences between c24g and alter4_educat)
+(1593 differences between c25g and alter5_educat)
+
+. 
+. ** Subjective Social Status
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'hn (94/99=.), gen(alter`i'_subjective_status)
+  3. }
+(693 differences between c21hn and alter1_subjective_status)
+(950 differences between c22hn and alter2_subjective_status)
+(1218 differences between c23hn and alter3_subjective_status)
+(1467 differences between c24hn and alter4_subjective_status)
+(1581 differences between c25hn and alter5_subjective_status)
+
+. 
+. ** Tie Strength: c2@i
+. lab define tie_strength 1"Neutral and below (& Refuse to answer)" 2"Close" 3"Very close"
+
+. 
+. forvalues i = 1(1)5 {
+  2.         recode c2`i'i (3 4 5 98=1)(2=2)(1=3)(94/97 99=.), gen(alter`i'_tie_strength)    
+  3.         lab value alter`i'_tie_strength tie_strength
+  4. }
+(1798 differences between c21i and alter1_tie_strength)
+(1776 differences between c22i and alter2_tie_strength)
+(1768 differences between c23i and alter3_tie_strength)
+(1791 differences between c24i and alter4_tie_strength)
+(1834 differences between c25i and alter5_tie_strength)
+
+. 
+. 
+. ///// Reshape to Long Format /////
+> 
+. preserve
+
+. keep ego_id alter* pernet_size
+
+. reshape long alter@_rel_raw alter@_rel alter@_rel2 alter@_meet_raw alter@_meet alter@_female alter@_age alter@_agecat alter@_marital
+>  alter@_ethnicity alter@_educat alter@_subjective_status alter@_tie_strength, i(ego_id) j(alter_id)
+(j = 1 2 3 4 5)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations            1,955   ->   9,775       
+Number of variables                  67   ->   16          
+j variable (5 values)                     ->   alter_id
+xij variables:
+alter1_rel_raw alter2_rel_raw ... alter5_rel_raw->alter_rel_raw
+   alter1_rel alter2_rel ... alter5_rel   ->   alter_rel
+alter1_rel2 alter2_rel2 ... alter5_rel2   ->   alter_rel2
+alter1_meet_raw alter2_meet_raw ... alter5_meet_raw->alter_meet_raw
+alter1_meet alter2_meet ... alter5_meet   ->   alter_meet
+alter1_female alter2_female ... alter5_female->alter_female
+   alter1_age alter2_age ... alter5_age   ->   alter_age
+alter1_agecat alter2_agecat ... alter5_agecat->alter_agecat
+alter1_marital alter2_marital ... alter5_marital->alter_marital
+alter1_ethnicity alter2_ethnicity ... alter5_ethnicity->alter_ethnicity
+alter1_educat alter2_educat ... alter5_educat->alter_educat
+alter1_subjective_status alter2_subjective_status ... alter5_subjective_status->alter_subjective_status
+alter1_tie_strength alter2_tie_strength ... alter5_tie_strength->alter_tie_strength
+-----------------------------------------------------------------------------
+
+. 
+. drop if alter_id > pernet_size
+(5,809 observations deleted)
+
+. 
+. replace alter_id = ego_id*10 + alter_id
+variable alter_id was byte now long
+(3,966 real changes made)
+
+. order alter_tie_strength, after(pernet_size)
+
+. 
+. rename alter_* *
+
+. rename id alter_id
+
+. 
+. recode educat (1=6)(2=9)(3=12)(4=14)(5=16)(6=20), gen(eduyear)
+(3770 differences between educat and eduyear)
+
+. 
+. egen degree = count(alter_id), by(ego_id) // Max = 5
+
+. order degree, after(pernet_size)
+
+. 
+. save alter_data.dta, replace
+(file alter_data.dta not found)
+file alter_data.dta saved
+
+. restore
+
+. 
+. 
+. **#**************** Alter-Alter data ******************
+. local alter_alter "c312 c313 c314 c315 c323 c324 c325 c334 c335 c345"
+
+. 
+. lab define alter_alter_tie 0"(Refuse to answer)" 1"weak" 2"strong"
+
+. foreach x in `alter_alter'{
+  2.         recode `x' (98=0)(1=2)(2=1)(3 94/97 99=.)
+  3.         lab value `x' alter_alter_tie
+  4. }
+(1955 changes made to c312)
+(1955 changes made to c313)
+(1955 changes made to c314)
+(1955 changes made to c315)
+(1955 changes made to c323)
+(1955 changes made to c324)
+(1955 changes made to c325)
+(1955 changes made to c334)
+(1955 changes made to c335)
+(1955 changes made to c345)
+
+. 
+. preserve
+
+. keep ego `alter_alter'
+
+. 
+. reshape long c3, i(ego_id) j(alter_id)
+(j = 12 13 14 15 23 24 25 34 35 45)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations            1,955   ->   19,550      
+Number of variables                  11   ->   3           
+j variable (10 values)                    ->   alter_id
+xij variables:
+                     c312 c313 ... c345   ->   c3
+-----------------------------------------------------------------------------
+
+. 
+. gen from = ego_id*10 + floor(alter_id/10)
+
+. gen to = ego_id*10 + mod(alter_id, 10)
+
+. 
+. rename c3 weight
+
+. order weight, last
+
+. drop if weight == .
+(15,343 observations deleted)
+
+. drop alter_id
+
+. 
+. save aatie.dta, replace
+(file aatie.dta not found)
+file aatie.dta saved
+
+. restore
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/log/b_prepareData.log
+  log type:  text
+ closed on:  15 Nov 2024, 13:05:41
+--------------------------------------------------------------------------------------------------------------------------------------

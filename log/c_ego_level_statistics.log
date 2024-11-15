@@ -1,0 +1,2452 @@
+--------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/log/c_ego_level_statistics.log
+  log type:  text
+ opened on:  15 Nov 2024, 14:37:48
+
+. 
+. 
+. cd "$workdata"
+/Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/workdata
+
+. 
+. use "ego_data_full.dta", clear
+
+. merge 1:1 ego_id using "ego_level_statistics_stata.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           665
+        from master                       665  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                             1,290  (_merge==3)
+    -----------------------------------------
+
+. drop _merge
+
+. 
+. merge 1:1 ego_id using "ego_level_statistics_R.dta"
+(variable ego_id was long, now double to accommodate using data's values)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           665
+        from master                       665  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                             1,290  (_merge==3)
+    -----------------------------------------
+
+. drop _merge
+
+. 
+. gen lnindependence = log(independence+0.01)
+(1 missing value generated)
+
+. 
+. // Network size
+. recode pernet_size (0=1)(1/6=0), gen(isolated) 
+(1948 differences between pernet_size and isolated)
+
+. replace pernet_size = degree if pernet_size == .
+(7 real changes made)
+
+. recode pernet_size (6=6.5) // Follow Marsden (1987)
+(202 changes made to pernet_size)
+
+. gen pernet_size2 = pernet_size*pernet_size
+
+. 
+. save "ego_data_final.dta", replace
+file ego_data_final.dta saved
+
+. 
+. /************** Missing Values **************/
+. mdesc
+
+    Variable    |     Missing          Total     Percent Missing
+----------------+-----------------------------------------------
+         ego_id |           0          1,955           0.00
+         region |           0          1,955           0.00
+           wsel |           0          1,955           0.00
+         female |           0          1,955           0.00
+          byear |           2          1,955           0.10
+         bmonth |          11          1,955           0.56
+          bdate |          11          1,955           0.56
+          syear |           0          1,955           0.00
+          sdate |           0          1,955           0.00
+            age |           1          1,955           0.05
+      age_conti |           1          1,955           0.05
+           age2 |           1          1,955           0.05
+         agecat |           1          1,955           0.05
+         educat |           0          1,955           0.00
+        eduyear |           0          1,955           0.00
+   eduyear_self |           0          1,955           0.00
+   residence_~e |          12          1,955           0.61
+          urban |          12          1,955           0.61
+       religion |           1          1,955           0.05
+   religion_f~q |           0          1,955           0.00
+         ethnic |           8          1,955           0.41
+        marital |           2          1,955           0.10
+   living_mem~e |          34          1,955           1.74
+   living_alone |          34          1,955           1.74
+   living_pre~m |           7          1,955           0.36
+   living_chi~m |           7          1,955           0.36
+     employment |           0          1,955           0.00
+   employment~t |           0          1,955           0.00
+       employed |           0          1,955           0.00
+        rincome |          99          1,955           5.06
+      lnrincome |          99          1,955           5.06
+        hincome |         526          1,955          26.91
+   subjective~s |          58          1,955           2.97
+      happiness |           5          1,955           0.26
+          happy |           5          1,955           0.26
+     healthness |           0          1,955           0.00
+       depress1 |           3          1,955           0.15
+       depress2 |           7          1,955           0.36
+       depress3 |           7          1,955           0.36
+     depression |           3          1,955           0.15
+   lack_compa~p |           2          1,955           0.10
+         lonely |           4          1,955           0.20
+       excluded |           8          1,955           0.41
+   less_than_~s |          16          1,955           0.82
+     loneliness |           1          1,955           0.05
+       contact6 |           6          1,955           0.31
+       contact4 |           6          1,955           0.31
+    online_time |           2          1,955           0.10
+    pernet_size |           0          1,955           0.00
+    emonet_size |           9          1,955           0.46
+   family_str~s |           2          1,955           0.10
+   family_dem~d |           5          1,955           0.26
+    others_mood |          10          1,955           0.51
+   relation_b~n |           6          1,955           0.31
+   relation_p~e |           0          1,955           0.00
+   network_pr~e |           0          1,955           0.00
+   friend_con~q |           1          1,955           0.05
+   independence |           1          1,955           0.05
+   socializin~q |           2          1,955           0.10
+      talkative |           3          1,955           0.15
+      extravert |           7          1,955           0.36
+       outgoing |           2          1,955           0.10
+          trust |          17          1,955           0.87
+         degree |         665          1,955          34.02
+   tie_streng~n |         672          1,955          34.37
+   tie_streng~d |         935          1,955          47.83
+     has_spouse |         681          1,955          34.83
+     has_parent |         681          1,955          34.83
+      has_child |         681          1,955          34.83
+   has_close_~d |         681          1,955          34.83
+     has_friend |         681          1,955          34.83
+    kin_percent |         681          1,955          34.83
+   female_per~t |         681          1,955          34.83
+       age_mean |         685          1,955          35.04
+   married_pe~t |         683          1,955          34.94
+   eduyear_mean |         698          1,955          35.70
+   subjective~n |         691          1,955          35.35
+   subjective~x |         691          1,955          35.35
+        kin_IQV |         681          1,955          34.83
+     female_IQV |         681          1,955          34.83
+    married_IQV |         683          1,955          34.94
+         age_sd |         943          1,955          48.24
+     eduyear_sd |         965          1,955          49.36
+   subjective~d |         950          1,955          48.59
+   subjective~e |         708          1,955          36.21
+   eduyear_di~e |         773          1,955          39.54
+   age_distance |         696          1,955          35.60
+   married_EI~x |         696          1,955          35.60
+   married_sa~t |         696          1,955          35.60
+   gender_EI_~x |         682          1,955          34.88
+   gender_sam~t |         682          1,955          34.88
+        density |         928          1,955          47.47
+    component_n |         665          1,955          34.02
+   component_~o |         928          1,955          47.47
+    betweenness |         665          1,955          34.02
+   lnindepend~e |           1          1,955           0.05
+       isolated |           7          1,955           0.36
+   pernet_size2 |           0          1,955           0.00
+----------------+-----------------------------------------------
+
+. mdesc if !isolated
+
+    Variable    |     Missing          Total     Percent Missing
+----------------+-----------------------------------------------
+         ego_id |           0          1,283           0.00
+         region |           0          1,283           0.00
+           wsel |           0          1,283           0.00
+         female |           0          1,283           0.00
+          byear |           2          1,283           0.16
+         bmonth |           4          1,283           0.31
+          bdate |           4          1,283           0.31
+          syear |           0          1,283           0.00
+          sdate |           0          1,283           0.00
+            age |           0          1,283           0.00
+      age_conti |           0          1,283           0.00
+           age2 |           0          1,283           0.00
+         agecat |           0          1,283           0.00
+         educat |           0          1,283           0.00
+        eduyear |           0          1,283           0.00
+   eduyear_self |           0          1,283           0.00
+   residence_~e |           5          1,283           0.39
+          urban |           5          1,283           0.39
+       religion |           1          1,283           0.08
+   religion_f~q |           0          1,283           0.00
+         ethnic |           1          1,283           0.08
+        marital |           0          1,283           0.00
+   living_mem~e |          20          1,283           1.56
+   living_alone |          20          1,283           1.56
+   living_pre~m |           2          1,283           0.16
+   living_chi~m |           2          1,283           0.16
+     employment |           0          1,283           0.00
+   employment~t |           0          1,283           0.00
+       employed |           0          1,283           0.00
+        rincome |          39          1,283           3.04
+      lnrincome |          39          1,283           3.04
+        hincome |         261          1,283          20.34
+   subjective~s |          12          1,283           0.94
+      happiness |           2          1,283           0.16
+          happy |           2          1,283           0.16
+     healthness |           0          1,283           0.00
+       depress1 |           0          1,283           0.00
+       depress2 |           1          1,283           0.08
+       depress3 |           1          1,283           0.08
+     depression |           0          1,283           0.00
+   lack_compa~p |           0          1,283           0.00
+         lonely |           0          1,283           0.00
+       excluded |           1          1,283           0.08
+   less_than_~s |           4          1,283           0.31
+     loneliness |           0          1,283           0.00
+       contact6 |           3          1,283           0.23
+       contact4 |           3          1,283           0.23
+    online_time |           0          1,283           0.00
+    pernet_size |           0          1,283           0.00
+    emonet_size |           5          1,283           0.39
+   family_str~s |           0          1,283           0.00
+   family_dem~d |           1          1,283           0.08
+    others_mood |           4          1,283           0.31
+   relation_b~n |           1          1,283           0.08
+   relation_p~e |           0          1,283           0.00
+   network_pr~e |           0          1,283           0.00
+   friend_con~q |           0          1,283           0.00
+   independence |           0          1,283           0.00
+   socializin~q |           1          1,283           0.08
+      talkative |           0          1,283           0.00
+      extravert |           2          1,283           0.16
+       outgoing |           0          1,283           0.00
+          trust |           6          1,283           0.47
+         degree |           0          1,283           0.00
+   tie_streng~n |           0          1,283           0.00
+   tie_streng~d |         263          1,283          20.50
+     has_spouse |           9          1,283           0.70
+     has_parent |           9          1,283           0.70
+      has_child |           9          1,283           0.70
+   has_close_~d |           9          1,283           0.70
+     has_friend |           9          1,283           0.70
+    kin_percent |           9          1,283           0.70
+   female_per~t |           9          1,283           0.70
+       age_mean |          13          1,283           1.01
+   married_pe~t |          11          1,283           0.86
+   eduyear_mean |          26          1,283           2.03
+   subjective~n |          19          1,283           1.48
+   subjective~x |          19          1,283           1.48
+        kin_IQV |           9          1,283           0.70
+     female_IQV |           9          1,283           0.70
+    married_IQV |          11          1,283           0.86
+         age_sd |         271          1,283          21.12
+     eduyear_sd |         293          1,283          22.84
+   subjective~d |         278          1,283          21.67
+   subjective~e |          36          1,283           2.81
+   eduyear_di~e |         101          1,283           7.87
+   age_distance |          24          1,283           1.87
+   married_EI~x |          24          1,283           1.87
+   married_sa~t |          24          1,283           1.87
+   gender_EI_~x |          10          1,283           0.78
+   gender_sam~t |          10          1,283           0.78
+        density |         263          1,283          20.50
+    component_n |           0          1,283           0.00
+   component_~o |         263          1,283          20.50
+    betweenness |           0          1,283           0.00
+   lnindepend~e |           0          1,283           0.00
+       isolated |           0          1,283           0.00
+   pernet_size2 |           0          1,283           0.00
+----------------+-----------------------------------------------
+
+. 
+. qui reg loneliness female c.age##c.age eduyear lnrincome subjective_status i.employment_short i.marital i.ethnic i.residence_type i.
+> religion i.isolated
+
+. gen complete = 1 if e(sample)
+(171 missing values generated)
+
+. // Only keep complete case !!! //
+. drop if !complete
+(0 observations deleted)
+
+. 
+. /***************** Estimation & Plotting *****************/
+. global demographic "female c.age##c.age eduyear lnrincome subjective_status i.employment_short i.marital i.ethnic i.residence_type i
+> .religion"
+
+. global personality "trust outgoing lnindependence"
+
+. 
+. set scheme white_tableau // stcolor; white_tableau; gg_tableau (Stata 18+, or https://github.com/asjadnaqvi/stata-schemepack)
+
+. cd "$output"
+/Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output
+
+. 
+. /* PART I: Demographic variables */ 
+. // Model 1: demographic (all sample) //
+. reg loneliness $demographic [iw=wsel]
+
+      Source |       SS           df       MS      Number of obs   =     1,775
+-------------+----------------------------------   F(21, 1753)     =      7.06
+       Model |  61.7719653        21  2.94152216   Prob > F        =    0.0000
+    Residual |  730.695916     1,753  .416825964   R-squared       =    0.0779
+-------------+----------------------------------   Adj R-squared   =    0.0673
+       Total |  792.467881     1,774  .446712447   Root MSE        =    .64548
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0134375   .0325463     0.41   0.680    -.0503962    .0772712
+                             age |  -.0045675   .0060149    -0.76   0.448    -.0163647    .0072297
+                                 |
+                     c.age#c.age |   3.21e-06    .000059     0.05   0.957    -.0001125    .0001189
+                                 |
+                         eduyear |   .0027303   .0056722     0.48   0.630    -.0083947    .0138553
+                       lnrincome |   .0358066    .031295     1.14   0.253    -.0255728     .097186
+               subjective_status |  -.0301433    .009862    -3.06   0.002    -.0494858   -.0108007
+                                 |
+                employment_short |
+                       Employer  |  -.0692869   .0904208    -0.77   0.444    -.2466309    .1080572
+    Self-employed or Part-timer  |  -.0903656   .0611753    -1.48   0.140    -.2103498    .0296185
+                       Employed  |  -.0300539   .0463105    -0.65   0.516    -.1208835    .0607758
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2140422   .0479435    -4.46   0.000    -.3080746   -.1200097
+Separated, divorced, or widowed  |   .1221403   .0657982     1.86   0.064    -.0069109    .2511916
+                                 |
+                          ethnic |
+                          Hakka  |   .0627829   .0472915     1.33   0.184    -.0299708    .1555366
+                     Mainlander  |   .1403641    .067687     2.07   0.038     .0076084    .2731199
+            Aboriginal or other  |   .1403165   .1055853     1.33   0.184    -.0667698    .3474028
+                                 |
+                  residence_type |
+               Suburban or town  |   .0003528   .0387531     0.01   0.993    -.0756543      .07636
+                  Rural or farm  |  -.0760453    .046768    -1.63   0.104    -.1677722    .0156816
+                                 |
+                        religion |
+                        Buddism  |   .0089333   .0514629     0.17   0.862    -.0920018    .1098684
+                         Daoism  |   .0311907   .0512724     0.61   0.543    -.0693708    .1317523
+                           Folk  |   .0231309   .0426729     0.54   0.588    -.0605643    .1068261
+                       Catholic  |  -.2210251   .1754296    -1.26   0.208    -.5650984    .1230482
+                      Christian  |   .1973053   .0809185     2.44   0.015     .0385983    .3560123
+                                 |
+                           _cons |   1.811014   .1571168    11.53   0.000     1.502858     2.11917
+--------------------------------------------------------------------------------------------------
+
+. est store model_1
+
+. regress, coeflegend noheader
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Legend
+---------------------------------+----------------------------------------------------------------
+                          female |   .0134375  _b[female]
+                             age |  -.0045675  _b[age]
+                                 |
+                     c.age#c.age |   3.21e-06  _b[c.age#c.age]
+                                 |
+                         eduyear |   .0027303  _b[eduyear]
+                       lnrincome |   .0358066  _b[lnrincome]
+               subjective_status |  -.0301433  _b[subjective_status]
+                                 |
+                employment_short |
+                       Employer  |  -.0692869  _b[2.employment_short]
+    Self-employed or Part-timer  |  -.0903656  _b[3.employment_short]
+                       Employed  |  -.0300539  _b[4.employment_short]
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2140422  _b[2.marital]
+Separated, divorced, or widowed  |   .1221403  _b[3.marital]
+                                 |
+                          ethnic |
+                          Hakka  |   .0627829  _b[2.ethnic]
+                     Mainlander  |   .1403641  _b[3.ethnic]
+            Aboriginal or other  |   .1403165  _b[4.ethnic]
+                                 |
+                  residence_type |
+               Suburban or town  |   .0003528  _b[2.residence_type]
+                  Rural or farm  |  -.0760453  _b[3.residence_type]
+                                 |
+                        religion |
+                        Buddism  |   .0089333  _b[1.religion]
+                         Daoism  |   .0311907  _b[2.religion]
+                           Folk  |   .0231309  _b[3.religion]
+                       Catholic  |  -.2210251  _b[4.religion]
+                      Christian  |   .1973053  _b[5.religion]
+                                 |
+                           _cons |   1.811014  _b[_cons]
+--------------------------------------------------------------------------------------------------
+
+. coefplot (., if(@ll<0 & @ul>0))  (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         groups(?.marital = `""{bf:Marital status}" "(ref. Single)""' ///
+>                    ?.religion = `""{bf:Religion}" "(ref. No religion)""' ///
+>                    ?.employment_short = `""{bf:Employment status}" "(ref. Unemployed)""' ///
+>                    ?.ethnic = `""{bf:Ethnicity}" "(ref. Minan)""' ///
+>                    ?.residence_type = `""{bf:Residential type}" "(ref. Metropolitan)""', labsize(*0.8)) ///
+>         coeflabels(female = "Female" age = "Age" c.age#c.age = "Age{superscript:2}" ///
+>                            eduyear = "Years of education" lnrincome = "Personal income (logged)" subjective_status = "Subjective soc
+> ial status" ///
+>                            2.employment_short = "Employer" 3.employment_short = "Self-employed or Part-timer" 4.employment_short = "
+> Employed" ///
+>                            2.marital = "Married or cohabiting" 3.marital = "Separaed, divorced, or widowed" ///
+>                            2.residence_type = "Suburban or town" 3.residence_type = "Rural or farm" ///
+>                            2.ethnic = " Hakka" 3.ethnic = "Mainlander" 4.ethnic = "Aboriginal or other" ///
+>                            1.religion = "Buddism" 2.religion = "Daoism" 3.religion = "Folk Religion" 4.religion = "Catholic" 5.relig
+> ion = "Christian") ///
+>          p1(pstyle(p5)) p2(pstyle(p3)) ciopts(lwidth(*0.95)) msize(*1.035) ylabel( ,labsize(*0.75)) legend(off) offset(0) ///
+>          note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Results are adjusted based on the sampling weight.", size(vsm
+> all)) 
+
+. graph export "Fig1-1.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig1-1.jpg saved as JPG format
+
+. 
+. /* marginsplot
+> margins, at(age=(18(5)85)) 
+> marginsplot
+> */
+. 
+. 
+. // Model 2: demographic (male sample) //
+. reg loneliness $demographic [iw=wsel] if !female 
+note: female omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =       923
+-------------+----------------------------------   F(20, 902)      =      5.90
+       Model |  43.7722512        20  2.18861256   Prob > F        =    0.0000
+    Residual |  334.773823       902  .371146145   R-squared       =    0.1156
+-------------+----------------------------------   Adj R-squared   =    0.0969
+       Total |  378.546074       922  .410570579   Root MSE        =    .60891
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |          0  (omitted)
+                             age |    .006077   .0077644     0.78   0.434    -.0091614    .0213154
+                                 |
+                     c.age#c.age |  -.0000952   .0000767    -1.24   0.215    -.0002457    .0000553
+                                 |
+                         eduyear |   .0048798   .0076561     0.64   0.524     -.010146    .0199055
+                       lnrincome |   .0413788   .0415581     1.00   0.320     -.040183    .1229407
+               subjective_status |  -.0311437   .0125676    -2.48   0.013    -.0558088   -.0064786
+                                 |
+                employment_short |
+                       Employer  |  -.0662042   .1066489    -0.62   0.535    -.2755129    .1431046
+    Self-employed or Part-timer  |   -.061679   .0789569    -0.78   0.435    -.2166397    .0932817
+                       Employed  |  -.1126377   .0654487    -1.72   0.086    -.2410871    .0158118
+                                 |
+                         marital |
+          Married or cohabiting  |   -.292867   .0619998    -4.72   0.000    -.4145477   -.1711863
+Separated, divorced, or widowed  |   .2469387   .0899024     2.75   0.006     .0704966    .4233808
+                                 |
+                          ethnic |
+                          Hakka  |   .0019591   .0619059     0.03   0.975    -.1195372    .1234554
+                     Mainlander  |    .101821   .0964319     1.06   0.291    -.0874359    .2910779
+            Aboriginal or other  |  -.1651331   .1530344    -1.08   0.281     -.465478    .1352118
+                                 |
+                  residence_type |
+               Suburban or town  |   .0385021   .0535673     0.72   0.472    -.0666289    .1436332
+                  Rural or farm  |  -.0375539   .0638117    -0.59   0.556    -.1627905    .0876828
+                                 |
+                        religion |
+                        Buddism  |   .0550272   .0706447     0.78   0.436    -.0836199    .1936744
+                         Daoism  |    .028859   .0650891     0.44   0.658    -.0988847    .1566027
+                           Folk  |   .0267681   .0551464     0.49   0.628    -.0814621    .1349983
+                       Catholic  |  -.0211344   .2468816    -0.09   0.932    -.5056635    .4633948
+                      Christian  |   .1874238   .1269636     1.48   0.140    -.0617547    .4366023
+                                 |
+                           _cons |   1.585447   .2048812     7.74   0.000     1.183347    1.987546
+--------------------------------------------------------------------------------------------------
+
+. est store model_2
+
+. // Model 3: demographic (female sample) //
+. reg loneliness $demographic [iw=wsel] if female
+note: female omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =       851
+-------------+----------------------------------   F(20, 830)      =      3.59
+       Model |  32.8940406        20  1.64470203   Prob > F        =    0.0000
+    Residual |  380.549324       830  .458493162   R-squared       =    0.0796
+-------------+----------------------------------   Adj R-squared   =    0.0584
+       Total |  413.443365       850  .486403959   Root MSE        =    .67677
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |          0  (omitted)
+                             age |  -.0214634   .0095122    -2.26   0.024    -.0401343   -.0027926
+                                 |
+                     c.age#c.age |   .0001608   .0000936     1.72   0.086    -.0000228    .0003445
+                                 |
+                         eduyear |  -.0028633   .0086352    -0.33   0.740    -.0198126     .014086
+                       lnrincome |    .050819   .0481584     1.06   0.292    -.0437075    .1453455
+               subjective_status |  -.0233614   .0157762    -1.48   0.139    -.0543273    .0076045
+                                 |
+                employment_short |
+                       Employer  |  -.1810331   .1751239    -1.03   0.302     -.524771    .1627048
+    Self-employed or Part-timer  |  -.1770179    .098405    -1.80   0.072    -.3701698     .016134
+                       Employed  |   .0333508   .0664088     0.50   0.616    -.0969982    .1636998
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1135938   .0762005    -1.49   0.136    -.2631621    .0359746
+Separated, divorced, or widowed  |   .0803495   .0993395     0.81   0.419    -.1146367    .2753358
+                                 |
+                          ethnic |
+                          Hakka  |   .1214094    .072023     1.69   0.092    -.0199593    .2627781
+                     Mainlander  |   .1822483   .0958357     1.90   0.058    -.0058604     .370357
+            Aboriginal or other  |   .3340494   .1503203     2.22   0.027     .0389968    .6291021
+                                 |
+                  residence_type |
+               Suburban or town  |  -.0343858   .0565702    -0.61   0.543    -.1454232    .0766516
+                  Rural or farm  |  -.1218263   .0692275    -1.76   0.079    -.2577078    .0140552
+                                 |
+                        religion |
+                        Buddism  |  -.0333597    .075249    -0.44   0.658    -.1810605    .1143411
+                         Daoism  |   .0475856   .0816347     0.58   0.560    -.1126491    .2078203
+                           Folk  |   .0313218   .0659315     0.48   0.635    -.0980902    .1607339
+                       Catholic  |  -.2930124   .2520061    -1.16   0.245    -.7876566    .2016319
+                      Christian  |    .229377   .1080396     2.12   0.034      .017314    .4414399
+                                 |
+                           _cons |   2.179496    .239893     9.09   0.000     1.708628    2.650364
+--------------------------------------------------------------------------------------------------
+
+. est store model_3
+
+. coefplot model_2 model_3, drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         groups(?.marital = `""{bf:Marital status}" "(ref. Single)""' ///
+>                    ?.religion = `""{bf:Religion}" "(ref. No religion)""' ///
+>                    ?.employment_short = `""{bf:Employment status}" "(ref. Unemployed)""' ///
+>                    ?.ethnic = `""{bf:Ethnicity}" "(ref. Minan)""' ///
+>                    ?.residence_type = `""{bf:Residential type}" "(ref. Metropolitan)""', labsize(*0.8)) ///
+>         coeflabels(female = "Female" age = "Age" c.age#c.age = "Age{superscript:2}" 1.urban = "Living in urban" ///
+>                            eduyear = "Years of education" lnrincome = "Personal income (logged)" subjective_status = "Subjective soc
+> ial status" ///
+>                            2.employment_short = "Employer" 3.employment_short = "Self-employed or Part-timer" 4.employment_short = "
+> Employed " ///
+>                            2.marital = "Married or cohabiting" 3.marital = "Separated, divorced, or widowed" ///
+>                            2.residence_type = "Suburban or town" 3.residence_type = "Rural or farm" ///
+>                            2.ethnic = " Hakka" 3.ethnic = "Mainlander " 4.ethnic = "Aboriginal or other" ///
+>                            1.religion = "Buddism" 2.religion = "Daoism" 3.religion = "Folk Religion" 4.religion = "Catholic" 5.relig
+> ion = "Christian") ///
+>          p1(label(Male)) p2(label(Female)) ciopts(lwidth(*0.6)) msize(*0.6) ylabel( ,labsize(*0.75)) legend(size(*0.85)) ///
+>          note("{it:Note:}" "(1) Results are adjusted based on the sampling weight.", size(vsmall)) 
+
+. graph export "Fig1-2.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig1-2.jpg saved as JPG format
+
+. 
+. // Margins plot: Gender x Marital status //
+. reg loneliness $demographic i.female##i.marital [iw=wsel] 
+note: 1.female omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =     1,775
+-------------+----------------------------------   F(23, 1751)     =      7.07
+       Model |  67.3467053        23  2.92811762   Prob > F        =    0.0000
+    Residual |  725.121176     1,751  .414118319   R-squared       =    0.0850
+-------------+----------------------------------   Adj R-squared   =    0.0734
+       Total |  792.467881     1,774  .446712447   Root MSE        =    .64338
+
+----------------------------------------------------------------------------------------------------
+                        loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------------------------+----------------------------------------------------------------
+                            female |   .0179609   .0564442     0.32   0.750    -.0927442     .128666
+                               age |  -.0063707   .0060349    -1.06   0.291    -.0182071    .0054657
+                                   |
+                       c.age#c.age |   .0000242   .0000594     0.41   0.684    -.0000922    .0001406
+                                   |
+                           eduyear |    .001208   .0056949     0.21   0.832    -.0099614    .0123775
+                         lnrincome |   .0436283   .0313388     1.39   0.164    -.0178371    .1050936
+                 subjective_status |  -.0309848   .0098331    -3.15   0.002    -.0502706   -.0116991
+                                   |
+                  employment_short |
+                         Employer  |  -.0607618    .090273    -0.67   0.501     -.237816    .1162923
+      Self-employed or Part-timer  |  -.0874078   .0610988    -1.43   0.153    -.2072421    .0324265
+                         Employed  |  -.0282964   .0461629    -0.61   0.540    -.1188365    .0622438
+                                   |
+                           marital |
+            Married or cohabiting  |  -.2469098   .0572184    -4.32   0.000    -.3591335   -.1346862
+  Separated, divorced, or widowed  |   .3014878   .0881898     3.42   0.001     .1285193    .4744562
+                                   |
+                            ethnic |
+                            Hakka  |   .0607141   .0471423     1.29   0.198     -.031747    .1531753
+                       Mainlander  |   .1354084   .0674952     2.01   0.045     .0030287     .267788
+              Aboriginal or other  |   .1218164   .1053666     1.16   0.248    -.0848411    .3284739
+                                   |
+                    residence_type |
+                 Suburban or town  |  -.0009435   .0386629    -0.02   0.981    -.0767738    .0748869
+                    Rural or farm  |  -.0863676   .0467171    -1.85   0.065    -.1779948    .0052597
+                                   |
+                          religion |
+                          Buddism  |   .0062576   .0513017     0.12   0.903    -.0943614    .1068766
+                           Daoism  |   .0350711   .0512268     0.68   0.494    -.0654011    .1355433
+                             Folk  |   .0251249   .0425758     0.59   0.555    -.0583799    .1086296
+                         Catholic  |  -.2112295   .1748847    -1.21   0.227    -.5542343    .1317753
+                        Christian  |   .2059241   .0807227     2.55   0.011     .0476011    .3642472
+                                   |
+                          1.female |          0  (omitted)
+                                   |
+                    female#marital |
+          1#Married or cohabiting  |   .0627048   .0707797     0.89   0.376    -.0761168    .2015265
+1#Separated, divorced, or widowed  |  -.2985348    .105288    -2.84   0.005    -.5050382   -.0920313
+                                   |
+                             _cons |   1.859522   .1581941    11.75   0.000     1.549253    2.169791
+----------------------------------------------------------------------------------------------------
+
+. qui margins female#marital
+
+. marginsplot, recast(scatter) title("") ///
+>         xtitle("{bf:Gender}") ytitle("{bf:Predicted loneliness}") ///
+>         xlabel(0"Male" 1"Female") xsc(r(-0.25 1.25)) ysc(r(1.14 2.02)) ///
+>         legend(subtitle("{bf:Marital status}"))
+
+Variables that uniquely identify margins: female marital
+
+. //      legend(subtitle("") position(6) rows(1) region(lcolor("black") lwidth(0.15) margin(medsmall)))  
+. graph export "Fig1-3.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig1-3.jpg saved as JPG format
+
+. 
+. /* PART II: Social isolation */ 
+. // Model 4: isolation //
+. reg loneliness $demographic i.isolated [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,773
+-------------+----------------------------------   F(22, 1750)     =      7.65
+       Model |  69.4211689        22  3.15550768   Prob > F        =    0.0000
+    Residual |  722.567514     1,750  .412895723   R-squared       =    0.0877
+-------------+----------------------------------   Adj R-squared   =    0.0766
+       Total |  791.988683     1,772   .44694621   Root MSE        =    .64241
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |  -.0015569   .0325968    -0.05   0.962    -.0654896    .0623757
+                             age |  -.0033771   .0059948    -0.56   0.573    -.0151348    .0083806
+                                 |
+                     c.age#c.age |   4.82e-06   .0000587     0.08   0.935    -.0001104      .00012
+                                 |
+                         eduyear |  -.0005007   .0056982    -0.09   0.930    -.0116767    .0106753
+                       lnrincome |   .0217728   .0313356     0.69   0.487    -.0396864     .083232
+               subjective_status |  -.0303228   .0098156    -3.09   0.002    -.0495742   -.0110714
+                                 |
+                employment_short |
+                       Employer  |  -.0570418   .0900353    -0.63   0.526    -.2336299    .1195462
+    Self-employed or Part-timer  |  -.0883774   .0608934    -1.45   0.147    -.2078089    .0310541
+                       Employed  |  -.0249467   .0461088    -0.54   0.589    -.1153807    .0654874
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2237239   .0477685    -4.68   0.000    -.3174133   -.1300345
+Separated, divorced, or widowed  |   .1198783   .0654905     1.83   0.067    -.0085696    .2483263
+                                 |
+                          ethnic |
+                          Hakka  |    .066734    .047079     1.42   0.157     -.025603    .1590711
+                     Mainlander  |   .1370928   .0673726     2.03   0.042     .0049535     .269232
+            Aboriginal or other  |   .1400107   .1063068     1.32   0.188     -.068491    .3485123
+                                 |
+                  residence_type |
+               Suburban or town  |   .0078299   .0386526     0.20   0.839    -.0679802    .0836399
+                  Rural or farm  |  -.0668386   .0466345    -1.43   0.152    -.1583037    .0246265
+                                 |
+                        religion |
+                        Buddism  |   .0036804   .0512326     0.07   0.943    -.0968031    .1041639
+                         Daoism  |   .0228346   .0510638     0.45   0.655    -.0773178     .122987
+                           Folk  |   .0217007   .0425039     0.51   0.610    -.0616631    .1050646
+                       Catholic  |  -.2434346    .174883    -1.39   0.164    -.5864363     .099567
+                      Christian  |   .1915618   .0805527     2.38   0.018      .033572    .3495515
+                                 |
+                      1.isolated |  -.1613367   .0370078    -4.36   0.000    -.2339208   -.0887527
+                           _cons |   1.868999   .1570159    11.90   0.000      1.56104    2.176957
+--------------------------------------------------------------------------------------------------
+
+. est store model_4
+
+. margins isolated
+
+Predictive margins                                       Number of obs = 1,784
+Model VCE: OLS
+
+Expression: Linear prediction, predict()
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    isolated |
+          0  |   1.478652   .0194846    75.89   0.000     1.440436    1.516867
+          1  |   1.317315   .0291863    45.13   0.000     1.260071    1.374559
+------------------------------------------------------------------------------
+
+. marginsplot, recast(scatter) title("") xtitle("{bf:Social isolation}") ytitle("{bf:Predicted loneliness}") ///
+>         xsc(r(-0.35 1.35)) ysc(r(1.21 1.6)) ylabel(1.23[0.05]1.59) xlabel(1"Isolated" 0"Not isolated") xsize(1.25) ysize(1) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall)) 
+
+Variables that uniquely identify margins: isolated
+
+. graph export "Fig2-1.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig2-1.jpg saved as JPG format
+
+. 
+. // Margins plot: Gender x Isolation //
+. reg loneliness $demographic i.female##i.isolated [iw=wsel] 
+note: 1.female omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =     1,773
+-------------+----------------------------------   F(23, 1749)     =      7.60
+       Model |  71.8923968        23  3.12575638   Prob > F        =    0.0000
+    Residual |  720.096287     1,749   .41171886   R-squared       =    0.0908
+-------------+----------------------------------   Adj R-squared   =    0.0793
+       Total |  791.988683     1,772   .44694621   Root MSE        =     .6415
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0498312   .0387203     1.29   0.198    -.0261118    .1257742
+                             age |  -.0034104   .0059863    -0.57   0.569    -.0151514    .0083306
+                                 |
+                     c.age#c.age |   3.62e-06   .0000587     0.06   0.951    -.0001114    .0001187
+                                 |
+                         eduyear |  -.0015577   .0057064    -0.27   0.785    -.0127498    .0096344
+                       lnrincome |   .0241704   .0313062     0.77   0.440    -.0372311     .085572
+               subjective_status |   -.030564    .009802    -3.12   0.002     -.049789   -.0113391
+                                 |
+                employment_short |
+                       Employer  |  -.0607937   .0899199    -0.68   0.499    -.2371556    .1155681
+    Self-employed or Part-timer  |  -.0958074   .0608821    -1.57   0.116    -.2152167     .023602
+                       Employed  |  -.0272881   .0460529    -0.59   0.554    -.1176126    .0630365
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2258681   .0477084    -4.73   0.000    -.3194397   -.1322966
+Separated, divorced, or widowed  |   .1256543   .0654396     1.92   0.055    -.0026938    .2540024
+                                 |
+                          ethnic |
+                          Hakka  |   .0668669   .0470119     1.42   0.155    -.0253386    .1590724
+                     Mainlander  |    .136272   .0672773     2.03   0.043     .0043196    .2682245
+            Aboriginal or other  |   .1521024   .1062698     1.43   0.153    -.0563267    .3605315
+                                 |
+                  residence_type |
+               Suburban or town  |   .0055834   .0386083     0.14   0.885    -.0701399    .0813067
+                  Rural or farm  |   -.076142   .0467224    -1.63   0.103    -.1677797    .0154957
+                                 |
+                        religion |
+                        Buddism  |   .0014045   .0511679     0.03   0.978    -.0989523    .1017612
+                         Daoism  |   .0257479   .0510048     0.50   0.614    -.0742888    .1257847
+                           Folk  |   .0258069   .0424764     0.61   0.544    -.0575029    .1091167
+                       Catholic  |  -.2390064   .1746429    -1.37   0.171    -.5815373    .1035245
+                      Christian  |   .1897607   .0804412     2.36   0.018     .0319897    .3475318
+                                 |
+                        1.female |          0  (omitted)
+                      1.isolated |  -.0892727   .0472278    -1.89   0.059    -.1819015    .0033561
+                                 |
+                 female#isolated |
+                            1 1  |  -.1623745   .0662605    -2.45   0.014    -.2923326   -.0324163
+                                 |
+                           _cons |   1.863065   .1568107    11.88   0.000     1.555508    2.170621
+--------------------------------------------------------------------------------------------------
+
+. qui margins female#isolated 
+
+. marginsplot, recast(scatter) title("") xtitle("{bf:Gender}") ytitle("{bf:Predicted loneliness}") ///
+>         xsc(r(-0.35 1.35)) ysc(r(1.08 1.55)) ylabel(1.1[0.07]1.62) xlabel(1"Female" 0"Male") ///
+>         plot(, label("Not isolated" "Isolated")) xsize(1.4) ysize(1) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall)) 
+
+Variables that uniquely identify margins: female isolated
+
+. graph export "Fig2-2.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig2-2.jpg saved as JPG format
+
+. 
+. // Margins plot: Education x Isolation //
+. reg loneliness $demographic c.eduyear##i.isolated [iw=wsel] 
+note: eduyear omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =     1,773
+-------------+----------------------------------   F(23, 1749)     =      7.36
+       Model |  69.8611394        23  3.03744084   Prob > F        =    0.0000
+    Residual |  722.127544     1,749  .412880242   R-squared       =    0.0882
+-------------+----------------------------------   Adj R-squared   =    0.0767
+       Total |  791.988683     1,772   .44694621   Root MSE        =     .6424
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |  -.0024751   .0326083    -0.08   0.940    -.0664304    .0614802
+                             age |  -.0027721   .0060232    -0.46   0.645    -.0145856    .0090415
+                                 |
+                     c.age#c.age |  -1.97e-06   .0000591    -0.03   0.973    -.0001179     .000114
+                                 |
+                         eduyear |   .0029598   .0066107     0.45   0.654    -.0100058    .0159255
+                       lnrincome |   .0217612    .031335     0.69   0.487    -.0396969    .0832192
+               subjective_status |  -.0307581   .0098244    -3.13   0.002    -.0500269   -.0114893
+                                 |
+                employment_short |
+                       Employer  |  -.0520776   .0901619    -0.58   0.564     -.228914    .1247588
+    Self-employed or Part-timer  |  -.0853903   .0609609    -1.40   0.161    -.2049543    .0341737
+                       Employed  |  -.0248691   .0461079    -0.54   0.590    -.1153016    .0655634
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2219369    .047799    -4.64   0.000     -.315686   -.1281878
+Separated, divorced, or widowed  |   .1220404   .0655228     1.86   0.063    -.0064708    .2505516
+                                 |
+                          ethnic |
+                          Hakka  |   .0684032   .0471059     1.45   0.147    -.0239866     .160793
+                     Mainlander  |   .1399547   .0674283     2.08   0.038     .0077061    .2722033
+            Aboriginal or other  |   .1442577   .1063843     1.36   0.175    -.0643961    .3529115
+                                 |
+                  residence_type |
+               Suburban or town  |   .0095119   .0386861     0.25   0.806     -.066364    .0853879
+                  Rural or farm  |  -.0645585   .0466858    -1.38   0.167    -.1561245    .0270074
+                                 |
+                        religion |
+                        Buddism  |   .0060391   .0512825     0.12   0.906    -.0945424    .1066205
+                         Daoism  |   .0240005   .0510753     0.47   0.638    -.0761745    .1241756
+                           Folk  |   .0238623   .0425547     0.56   0.575     -.059601    .1073257
+                       Catholic  |  -.2400155   .1749111    -1.37   0.170    -.5830723    .1030413
+                      Christian  |   .1885643   .0806035     2.34   0.019     .0304749    .3466537
+                                 |
+                         eduyear |          0  (omitted)
+                      1.isolated |  -.0618551   .1032094    -0.60   0.549    -.2642819    .1405718
+                                 |
+              isolated#c.eduyear |
+                              1  |  -.0087994   .0085221    -1.03   0.302    -.0255139    .0079151
+                                 |
+                           _cons |   1.808657    .167536    10.80   0.000     1.480065    2.137249
+--------------------------------------------------------------------------------------------------
+
+. qui margins, at(eduyear=(2(2)16)) over(isolated) 
+
+. marginsplot, title("") xtitle("{bf:Years of education}") ytitle("{bf:Predicted loneliness}") ///
+>         xsc(r(1.55 16.35)) ysc(r(1.12 1.65)) ylabel(1.15[0.07]1.65) ///
+>         plot( , label("Not isolated" "Isolated")) xsize(1.6) ysize(1) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall)) 
+
+Variables that uniquely identify margins: eduyear isolated
+
+. graph export "Fig2-3.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig2-3.jpg saved as JPG format
+
+. 
+. /* Part III */
+. // Model 5: social integration //
+. reg loneliness $demographic c.pernet_size##c.pernet_size c.tie_strength_mean if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,192
+-------------+----------------------------------   F(24, 1167)     =      4.24
+       Model |  44.2820444        24  1.84508518   Prob > F        =    0.0000
+    Residual |  507.891078     1,167  .435210864   R-squared       =    0.0802
+-------------+----------------------------------   Adj R-squared   =    0.0619
+       Total |  552.173123     1,191   .46362143   Root MSE        =     .6595
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |    .067569   .0413521     1.63   0.103    -.0135638    .1487018
+                             age |  -.0024203   .0088213    -0.27   0.784    -.0197276     .014887
+                                 |
+                     c.age#c.age |  -.0000193    .000093    -0.21   0.836    -.0002018    .0001632
+                                 |
+                         eduyear |  -.0017005   .0078424    -0.22   0.828    -.0170872    .0136862
+                       lnrincome |   .0393117   .0384616     1.02   0.307    -.0361499    .1147733
+               subjective_status |  -.0289822   .0138341    -2.09   0.036    -.0561246   -.0018398
+                                 |
+                employment_short |
+                       Employer  |  -.1026233   .1139661    -0.90   0.368    -.3262247    .1209781
+    Self-employed or Part-timer  |  -.1404256   .0837634    -1.68   0.094    -.3047692     .023918
+                       Employed  |  -.0584915   .0596204    -0.98   0.327    -.1754667    .0584837
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1576419   .0586466    -2.69   0.007    -.2727064   -.0425773
+Separated, divorced, or widowed  |   .1873769   .0898651     2.09   0.037     .0110617    .3636921
+                                 |
+                          ethnic |
+                          Hakka  |   .0597467   .0612935     0.97   0.330    -.0605111    .1800045
+                     Mainlander  |   .0425321   .0804772     0.53   0.597    -.1153642    .2004283
+            Aboriginal or other  |   .1761337   .1309125     1.35   0.179    -.0807164    .4329839
+                                 |
+                  residence_type |
+               Suburban or town  |   .0178384   .0464984     0.38   0.701    -.0733914    .1090683
+                  Rural or farm  |  -.0970339   .0589628    -1.65   0.100    -.2127188     .018651
+                                 |
+                        religion |
+                        Buddism  |  -.0596451   .0631142    -0.95   0.345    -.1834752    .0641849
+                         Daoism  |  -.0064932   .0621129    -0.10   0.917    -.1283586    .1153721
+                           Folk  |   .0217335     .05225     0.42   0.678    -.0807809    .1242479
+                       Catholic  |  -.2088244   .2038983    -1.02   0.306    -.6088726    .1912238
+                      Christian  |   .1406581   .0955238     1.47   0.141    -.0467596    .3280757
+                                 |
+                     pernet_size |   .0760451   .0491079     1.55   0.122    -.0203045    .1723947
+                                 |
+     c.pernet_size#c.pernet_size |  -.0091144   .0063837    -1.43   0.154    -.0216393    .0034105
+                                 |
+               tie_strength_mean |  -.1678982   .0449388    -3.74   0.000    -.2560681   -.0797283
+                           _cons |   2.174179   .2489838     8.73   0.000     1.685673    2.662685
+--------------------------------------------------------------------------------------------------
+
+. est store model_5
+
+. coefplot (., if(@ll<0 & @ul>0))  (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         keep(pernet_size c.pernet_size#c.pernet_size tie_strength_mean) ///
+>         coeflabels(pernet_size = "Network size" c.pernet_size#c.pernet_size = "Network size{superscript:2}" ///
+>         tie_strength_mean = "Mean of tie strength") /// 
+>         p1(pstyle(p5)) p2(pstyle(p3))legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*1.4)) msize(*1.35) ylabel( ,labsize(*1)) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall)) 
+
+. graph export "Fig3-1.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-1.jpg saved as JPG format
+
+. 
+. 
+. // qui margins, at(pernet_size=(1(1)6)) 
+. // marginsplot 
+. 
+. // Model 6-8: Network structure //
+. reg loneliness $demographic c.pernet_size density if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =       951
+-------------+----------------------------------   F(23, 927)      =      2.53
+       Model |  26.2136464        23  1.13972375   Prob > F        =    0.0001
+    Residual |   418.44405       927  .451395955   R-squared       =    0.0590
+-------------+----------------------------------   Adj R-squared   =    0.0359
+       Total |  444.657696       950  .468060733   Root MSE        =    .67176
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0707972   .0466064     1.52   0.129    -.0206691    .1622635
+                             age |  -.0047057   .0103308    -0.46   0.649    -.0249802    .0155688
+                                 |
+                     c.age#c.age |   .0000296    .000111     0.27   0.790    -.0001883    .0002475
+                                 |
+                         eduyear |   .0032899   .0092445     0.36   0.722    -.0148526    .0214325
+                       lnrincome |    .025545   .0441194     0.58   0.563    -.0610404    .1121305
+               subjective_status |  -.0416302   .0162342    -2.56   0.010    -.0734903   -.0097702
+                                 |
+                employment_short |
+                       Employer  |   -.034749    .130353    -0.27   0.790    -.2905703    .2210723
+    Self-employed or Part-timer  |  -.1066669   .1023545    -1.04   0.298    -.3075403    .0942064
+                       Employed  |   .0043071   .0684044     0.06   0.950    -.1299383    .1385526
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1457064   .0668851    -2.18   0.030    -.2769703   -.0144426
+Separated, divorced, or widowed  |   .1751598   .1045975     1.67   0.094    -.0301157    .3804352
+                                 |
+                          ethnic |
+                          Hakka  |   .0277296    .068758     0.40   0.687    -.1072098    .1626689
+                     Mainlander  |   .0509189   .0889814     0.57   0.567    -.1237095    .2255472
+            Aboriginal or other  |  -.0236434   .1545991    -0.15   0.878    -.3270483    .2797615
+                                 |
+                  residence_type |
+               Suburban or town  |   .0346047   .0520929     0.66   0.507    -.0676291    .1368384
+                  Rural or farm  |  -.0572353   .0665938    -0.86   0.390    -.1879273    .0734567
+                                 |
+                        religion |
+                        Buddism  |  -.0435702   .0715525    -0.61   0.543    -.1839938    .0968534
+                         Daoism  |   .0210769   .0699087     0.30   0.763    -.1161207    .1582745
+                           Folk  |  -.0057451   .0590972    -0.10   0.923    -.1217249    .1102347
+                       Catholic  |  -.0903586   .2177189    -0.42   0.678    -.5176376    .3369204
+                      Christian  |   .1327088    .105423     1.26   0.208    -.0741866    .3396042
+                                 |
+                     pernet_size |   .0017543   .0141409     0.12   0.901    -.0259976    .0295062
+                         density |  -.1612206   .0789484    -2.04   0.041     -.316159   -.0062821
+                           _cons |    1.93817   .2432857     7.97   0.000     1.460715    2.415624
+--------------------------------------------------------------------------------------------------
+
+. est store model_6
+
+. 
+. reg loneliness $demographic c.pernet_size component_ratio if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =       951
+-------------+----------------------------------   F(23, 927)      =      2.43
+       Model |  25.3058532        23  1.10025449   Prob > F        =    0.0002
+    Residual |  419.351843       927  .452375235   R-squared       =    0.0569
+-------------+----------------------------------   Adj R-squared   =    0.0338
+       Total |  444.657696       950  .468060733   Root MSE        =    .67249
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0690233   .0466477     1.48   0.139    -.0225241    .1605707
+                             age |  -.0053235   .0103408    -0.51   0.607    -.0256176    .0149707
+                                 |
+                     c.age#c.age |   .0000341   .0001112     0.31   0.759    -.0001841    .0002523
+                                 |
+                         eduyear |   .0036891   .0092504     0.40   0.690    -.0144651    .0218432
+                       lnrincome |   .0255918   .0441831     0.58   0.563    -.0611188    .1123024
+               subjective_status |  -.0408709   .0162451    -2.52   0.012    -.0727523   -.0089895
+                                 |
+                employment_short |
+                       Employer  |  -.0336326   .1304983    -0.26   0.797     -.289739    .2224737
+    Self-employed or Part-timer  |  -.1104658   .1024344    -1.08   0.281    -.3114961    .0905645
+                       Employed  |    .006758   .0684808     0.10   0.921    -.1276373    .1411534
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1518706    .066867    -2.27   0.023    -.2830988   -.0206423
+Separated, divorced, or widowed  |   .1743797   .1047534     1.66   0.096    -.0312015    .3799609
+                                 |
+                          ethnic |
+                          Hakka  |   .0297439    .068837     0.43   0.666    -.1053504    .1648383
+                     Mainlander  |   .0514043    .089078     0.58   0.564    -.1234135    .2262221
+            Aboriginal or other  |  -.0185343    .154801    -0.12   0.905    -.3223353    .2852667
+                                 |
+                  residence_type |
+               Suburban or town  |   .0335719   .0521444     0.64   0.520    -.0687628    .1359066
+                  Rural or farm  |  -.0606369   .0666422    -0.91   0.363    -.1914239    .0701501
+                                 |
+                        religion |
+                        Buddism  |  -.0469506   .0715903    -0.66   0.512    -.1874484    .0935473
+                         Daoism  |   .0189398   .0699976     0.27   0.787    -.1184324    .1563119
+                           Folk  |  -.0081323   .0591373    -0.14   0.891    -.1241907    .1079262
+                       Catholic  |   -.098322   .2179286    -0.45   0.652    -.5260126    .3293685
+                      Christian  |   .1366707   .1055862     1.29   0.196    -.0705451    .3438864
+                                 |
+                     pernet_size |   .0075842   .0141364     0.54   0.592    -.0201588    .0353272
+                 component_ratio |   .1320637   .0899863     1.47   0.143    -.0445368    .3086642
+                           _cons |   1.785228   .2352738     7.59   0.000     1.323497    2.246959
+--------------------------------------------------------------------------------------------------
+
+. est store model_7
+
+. 
+. reg loneliness $demographic c.pernet_size betweenness if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,192
+-------------+----------------------------------   F(23, 1168)     =      3.79
+       Model |  38.2935341        23  1.66493626   Prob > F        =    0.0000
+    Residual |  513.879588     1,168  .439965401   R-squared       =    0.0694
+-------------+----------------------------------   Adj R-squared   =    0.0516
+       Total |  552.173123     1,191   .46362143   Root MSE        =     .6631
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0535625   .0411595     1.30   0.193    -.0271924    .1343173
+                             age |   .0004684   .0088582     0.05   0.958    -.0169113    .0178481
+                                 |
+                     c.age#c.age |  -.0000467   .0000934    -0.50   0.617      -.00023    .0001366
+                                 |
+                         eduyear |  -.0009387   .0078665    -0.12   0.905    -.0163728    .0144954
+                       lnrincome |   .0345184   .0386497     0.89   0.372    -.0413121    .1103489
+               subjective_status |   -.033187   .0139144    -2.39   0.017     -.060487    -.005887
+                                 |
+                employment_short |
+                       Employer  |  -.1050288   .1146069    -0.92   0.360    -.3298872    .1198295
+    Self-employed or Part-timer  |  -.1434199   .0842003    -1.70   0.089    -.3086207     .021781
+                       Employed  |  -.0451123   .0598351    -0.75   0.451    -.1625085    .0722839
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1631706   .0592005    -2.76   0.006    -.2793217   -.0470195
+Separated, divorced, or widowed  |   .1931542   .0904246     2.14   0.033     .0157414    .3705671
+                                 |
+                          ethnic |
+                          Hakka  |   .0594387   .0616188     0.96   0.335    -.0614572    .1803345
+                     Mainlander  |   .0496218   .0809894     0.61   0.540    -.1092792    .2085227
+            Aboriginal or other  |     .15285   .1315024     1.16   0.245    -.1051574    .4108575
+                                 |
+                  residence_type |
+               Suburban or town  |   .0221476   .0467399     0.47   0.636    -.0695559    .1138511
+                  Rural or farm  |  -.1057777   .0592681    -1.78   0.075    -.2220615    .0105062
+                                 |
+                        religion |
+                        Buddism  |  -.0583947    .063369    -0.92   0.357    -.1827245    .0659352
+                         Daoism  |     .00545   .0624817     0.09   0.931    -.1171389    .1280389
+                           Folk  |   .0157301   .0525294     0.30   0.765    -.0873323    .1187926
+                       Catholic  |  -.1923442   .2049469    -0.94   0.348    -.5944495    .2097611
+                      Christian  |   .1352859   .0959507     1.41   0.159    -.0529691    .3235409
+                                 |
+                     pernet_size |   .0057582   .0122613     0.47   0.639    -.0182984    .0298149
+                     betweenness |    .022625   .0135106     1.67   0.094    -.0038828    .0491328
+                           _cons |   1.754117   .2018626     8.69   0.000     1.358063    2.150171
+--------------------------------------------------------------------------------------------------
+
+. est store model_8
+
+. 
+. coefplot (model_6 model_7 model_8, if(@ll<0 & @ul>0)) (model_6 model_7 model_8, if(@ll>0 | @ul<0)),  drop(_cons) xline(0) nolabels s
+> ubtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         keep(density  component_ratio betweenness) ///
+>         coeflabels(density = "Density" component_ratio = "Component ratio" betweenness = "Ego betweenness") ///
+>         p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*1.4)) msize(*1.35) ylabel( ,labsize(*1)) offse
+> t(0) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Each model includes only one measure of network structure. Mod
+> el also contains all demographic variables." "(3) Results are adjusted based on the sampling weight.", size(vsmall))
+
+. graph export "Fig3-2.jpg", replace 
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-2.jpg saved as JPG format
+
+. 
+. // Model 9 Functional content - Quality //
+. reg loneliness $demographic c.pernet_size##c.network_pressure if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,192
+-------------+----------------------------------   F(24, 1167)     =     11.26
+       Model |  103.761338        24  4.32338907   Prob > F        =    0.0000
+    Residual |  448.411785     1,167  .384243175   R-squared       =    0.1879
+-------------+----------------------------------   Adj R-squared   =    0.1717
+       Total |  552.173123     1,191   .46362143   Root MSE        =    .61968
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0260771    .038467     0.68   0.498    -.0493951    .1015492
+                             age |  -.0017668   .0082966    -0.21   0.831    -.0180448    .0145112
+                                 |
+                     c.age#c.age |   4.27e-06   .0000875     0.05   0.961    -.0001675     .000176
+                                 |
+                         eduyear |  -.0026061   .0073553    -0.35   0.723    -.0170373     .011825
+                       lnrincome |   .0009088   .0361991     0.03   0.980    -.0701138    .0719314
+               subjective_status |  -.0324282    .012984    -2.50   0.013    -.0579028   -.0069535
+                                 |
+                employment_short |
+                       Employer  |  -.1391291   .1071858    -1.30   0.195    -.3494274    .0711693
+    Self-employed or Part-timer  |  -.1361559   .0787556    -1.73   0.084    -.2906743    .0183625
+                       Employed  |  -.0073349   .0559536    -0.13   0.896    -.1171157     .102446
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1782498   .0550619    -3.24   0.001    -.2862812   -.0702184
+Separated, divorced, or widowed  |   .1937734   .0844763     2.29   0.022      .028031    .3595158
+                                 |
+                          ethnic |
+                          Hakka  |    .059118   .0576144     1.03   0.305    -.0539215    .1721575
+                     Mainlander  |   .0480214   .0756322     0.63   0.526     -.100369    .1964117
+            Aboriginal or other  |   .1610326   .1231758     1.31   0.191    -.0806382    .4027034
+                                 |
+                  residence_type |
+               Suburban or town  |   .0388251   .0436678     0.89   0.374     -.046851    .1245013
+                  Rural or farm  |  -.0247612   .0557007    -0.44   0.657    -.1340459    .0845236
+                                 |
+                        religion |
+                        Buddism  |  -.1023435   .0593064    -1.73   0.085    -.2187026    .0140156
+                         Daoism  |  -.0624788   .0585998    -1.07   0.287    -.1774516    .0524939
+                           Folk  |  -.0064915   .0490625    -0.13   0.895     -.102752    .0897691
+                       Catholic  |    -.26452   .1918031    -1.38   0.168    -.6408374    .1117974
+                      Christian  |   .0382651   .0901244     0.42   0.671     -.138559    .2150891
+                                 |
+                     pernet_size |   .0065273   .0283438     0.23   0.818    -.0490833    .0621379
+                network_pressure |   .3557742   .0540114     6.59   0.000     .2498039    .4617445
+                                 |
+c.pernet_size#c.network_pressure |   .0016289   .0140787     0.12   0.908    -.0259935    .0292512
+                                 |
+                           _cons |    1.17014   .2058962     5.68   0.000      .766172    1.574108
+--------------------------------------------------------------------------------------------------
+
+. est store model_9
+
+. qui margins, at(network_pressure=(1(0.5)5) pernet_size=(1(2)5)) 
+
+. marginsplot, title("") xtitle("{bf:Pressure of Social Network (Negative Relationship)}") ytitle("{bf:Predicted loneliness}") ///
+>         plot( , label("Network size = 1" "Network size = 3" "Network size = 5")) note("{it:Note:}" "(1) Number of observations = `e(
+> N)'." "(2) Model also contains all demographic variables." "(3) Results are adjusted based on the sampling weight.")
+
+Variables that uniquely identify margins: network_pressure pernet_size
+
+. graph export "Fig3-3.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-3.jpg saved as JPG format
+
+. 
+. reg loneliness $demographic c.density##c.network_pressure if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =       951
+-------------+----------------------------------   F(24, 926)      =      9.27
+       Model |  86.1485102        24  3.58952126   Prob > F        =    0.0000
+    Residual |  358.509186       926  .387158948   R-squared       =    0.1937
+-------------+----------------------------------   Adj R-squared   =    0.1731
+       Total |  444.657696       950  .468060733   Root MSE        =    .62213
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0338993   .0432071     0.78   0.433    -.0508958    .1186945
+                             age |  -.0042558   .0095556    -0.45   0.656     -.023009    .0144974
+                                 |
+                     c.age#c.age |   .0000489   .0001028     0.48   0.634    -.0001528    .0002506
+                                 |
+                         eduyear |  -.0003222   .0085442    -0.04   0.970    -.0170904     .016446
+                       lnrincome |  -.0121082   .0408599    -0.30   0.767    -.0922969    .0680806
+               subjective_status |  -.0379508   .0149692    -2.54   0.011    -.0673284   -.0085732
+                                 |
+                employment_short |
+                       Employer  |  -.1039232   .1207961    -0.86   0.390    -.3409891    .1331426
+    Self-employed or Part-timer  |  -.1393405   .0948164    -1.47   0.142    -.3254204    .0467394
+                       Employed  |   .0378331   .0634023     0.60   0.551    -.0865957    .1622619
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1657807   .0619644    -2.68   0.008    -.2873877   -.0441737
+Separated, divorced, or widowed  |   .1786302   .0970472     1.84   0.066    -.0118277    .3690881
+                                 |
+                          ethnic |
+                          Hakka  |   .0376595   .0636304     0.59   0.554     -.087217     .162536
+                     Mainlander  |   .0615694   .0825524     0.75   0.456    -.1004421    .2235808
+            Aboriginal or other  |   .0544227   .1433447     0.38   0.704    -.2268954    .3357408
+                                 |
+                  residence_type |
+               Suburban or town  |   .0465384   .0481199     0.97   0.334    -.0478983     .140975
+                  Rural or farm  |   .0270643   .0620778     0.44   0.663    -.0947652    .1488939
+                                 |
+                        religion |
+                        Buddism  |  -.0863795    .066348    -1.30   0.193    -.2165894    .0438303
+                         Daoism  |  -.0344856   .0650046    -0.53   0.596    -.1620591    .0930879
+                           Folk  |  -.0150594   .0547146    -0.28   0.783    -.1224384    .0923196
+                       Catholic  |  -.2267392    .202004    -1.12   0.262     -.623178    .1696996
+                      Christian  |   .0117571   .0978841     0.12   0.904    -.1803433    .2038574
+                                 |
+                         density |   .1263191   .1942606     0.65   0.516    -.2549229    .5075612
+                network_pressure |   .4916447   .0815445     6.03   0.000     .3316113    .6516781
+                                 |
+    c.density#c.network_pressure |  -.1394345   .0967438    -1.44   0.150     -.329297     .050428
+                                 |
+                           _cons |   1.051101   .2656674     3.96   0.000     .5297207    1.572481
+--------------------------------------------------------------------------------------------------
+
+. qui margins, at(network_pressure=(1(0.5)5) density=(0.1(0.4)1)) 
+
+. marginsplot, title("") xtitle("{bf:Pressure of Social Network (Negative Relationship)}") ytitle("{bf:Predicted loneliness}") ///
+>          note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results 
+> are adjusted based on the sampling weight.")
+
+Variables that uniquely identify margins: network_pressure density
+
+. 
+. 
+. // Model 10 Functional content - Composition //
+. reg loneliness $demographic c.pernet_size kin_percent female_percent married_percent age_mean eduyear_mean subjective_status_mean su
+> bjective_status_max if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,159
+-------------+----------------------------------   F(29, 1129)     =      3.29
+       Model |   40.478614        29  1.39581427   Prob > F        =    0.0000
+    Residual |  479.438582     1,129  .424657735   R-squared       =    0.0779
+-------------+----------------------------------   Adj R-squared   =    0.0542
+       Total |  519.917196     1,158  .448978581   Root MSE        =    .65164
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0410468   .0419042     0.98   0.328     -.041172    .1232656
+                             age |   .0042242   .0092037     0.46   0.646     -.013834    .0222825
+                                 |
+                     c.age#c.age |  -.0001107   .0000956    -1.16   0.247    -.0002983    .0000768
+                                 |
+                         eduyear |  -.0034522   .0091616    -0.38   0.706    -.0214279    .0145235
+                       lnrincome |    .022102    .038726     0.57   0.568    -.0538811    .0980851
+               subjective_status |   -.038939   .0178995    -2.18   0.030    -.0740591   -.0038189
+                                 |
+                employment_short |
+                       Employer  |  -.0872834    .114606    -0.76   0.446    -.3121481    .1375812
+    Self-employed or Part-timer  |   -.126629   .0840854    -1.51   0.132    -.2916102    .0383522
+                       Employed  |  -.0347272   .0600192    -0.58   0.563    -.1524889    .0830345
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1224989   .0641952    -1.91   0.057    -.2484541    .0034564
+Separated, divorced, or widowed  |   .1433973   .0920753     1.56   0.120    -.0372607    .3240552
+                                 |
+                          ethnic |
+                          Hakka  |   .0214162   .0613605     0.35   0.727    -.0989771    .1418096
+                     Mainlander  |   .0356684   .0805305     0.44   0.658    -.1223379    .1936747
+            Aboriginal or other  |   .2348741   .1366701     1.72   0.086    -.0332818      .50303
+                                 |
+                  residence_type |
+               Suburban or town  |   .0336966   .0465426     0.72   0.469    -.0576232    .1250164
+                  Rural or farm  |  -.0633599   .0605937    -1.05   0.296    -.1822488     .055529
+                                 |
+                        religion |
+                        Buddism  |  -.0514748   .0635765    -0.81   0.418    -.1762162    .0732667
+                         Daoism  |   .0145493   .0627111     0.23   0.817     -.108494    .1375927
+                           Folk  |   .0161464   .0529673     0.30   0.761    -.0877791    .1200718
+                       Catholic  |  -.1852535   .2028891    -0.91   0.361    -.5833355    .2128286
+                      Christian  |   .1192056   .0959408     1.24   0.214    -.0690366    .3074478
+                                 |
+                     pernet_size |  -.0050573   .0124602    -0.41   0.685     -.029505    .0193904
+                     kin_percent |  -.0471847    .058433    -0.81   0.420    -.1618342    .0674648
+                  female_percent |  -.0268151   .0585124    -0.46   0.647    -.1416203    .0879902
+                 married_percent |  -.0901501   .0778378    -1.16   0.247    -.2428731    .0625729
+                        age_mean |   .0038164   .0028409     1.34   0.179    -.0017577    .0093904
+                    eduyear_mean |   .0128058   .0108258     1.18   0.237    -.0084351    .0340467
+          subjective_status_mean |  -.0730135   .0366771    -1.99   0.047    -.1449764   -.0010507
+           subjective_status_max |   .0857547   .0296281     2.89   0.004     .0276223    .1438871
+                           _cons |   1.450042   .2428481     5.97   0.000     .9735581    1.926527
+--------------------------------------------------------------------------------------------------
+
+. est store model_10
+
+. coefplot (., if(@ll<0 & @ul>0)) (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         keep(has* pernet_size kin_percent female_percent age_mean married_percent eduyear_mean subjective_status_mean subjective_sta
+> tus_max) ///
+>         coeflabels(pernet_size = "Network size" kin_percent = "% of kin ties" female_percent = "% of female alters" /// 
+>         age_mean = "μ of alters' age" married_percent = "% of married alters" eduyear_mean = "μ of alters' years of education" ///
+>         subjective_status_mean = "μ of alters' social status" subjective_status_max = "Max of alters' social status") ///
+>         p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*1.4)) msize(*1.35) ylabel( ,labsize(*0.9)) off
+> set(0) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall)) 
+
+. graph export "Fig3-4.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-4.jpg saved as JPG format
+
+. 
+. // Model 11 Functional content - Heterogeneity //
+. reg loneliness $demographic c.pernet_size kin_IQV female_IQV married_IQV age_sd eduyear_sd subjective_status_sd if !isolated  [iw=ws
+> el] 
+
+      Source |       SS           df       MS      Number of obs   =       921
+-------------+----------------------------------   F(28, 892)      =      2.53
+       Model |  31.1240317        28  1.11157256   Prob > F        =    0.0000
+    Residual |  392.478326       892  .439998123   R-squared       =    0.0735
+-------------+----------------------------------   Adj R-squared   =    0.0452
+       Total |  423.602358       920  .460437345   Root MSE        =    .66303
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0561436   .0466675     1.20   0.229    -.0354473    .1477345
+                             age |  -.0071369   .0106266    -0.67   0.502     -.027993    .0137193
+                                 |
+                     c.age#c.age |   .0000538   .0001141     0.47   0.637    -.0001701    .0002777
+                                 |
+                         eduyear |   .0045135   .0094232     0.48   0.632    -.0139808    .0230078
+                       lnrincome |   .0089799   .0444717     0.20   0.840    -.0783014    .0962612
+               subjective_status |  -.0337241   .0166775    -2.02   0.043    -.0664557   -.0009924
+                                 |
+                employment_short |
+                       Employer  |  -.0394388     .12972    -0.30   0.761    -.2940307    .2151532
+    Self-employed or Part-timer  |  -.1014451   .1036496    -0.98   0.328    -.3048705    .1019804
+                       Employed  |   .0265446   .0694265     0.38   0.702    -.1097137     .162803
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1491532   .0676495    -2.20   0.028     -.281924   -.0163824
+Separated, divorced, or widowed  |    .147678   .1062424     1.39   0.165    -.0608362    .3561922
+                                 |
+                          ethnic |
+                          Hakka  |   .0021371    .068961     0.03   0.975    -.1332077    .1374819
+                     Mainlander  |    .080108   .0887748     0.90   0.367    -.0941237    .2543398
+            Aboriginal or other  |   .0690912   .1621273     0.43   0.670    -.2491042    .3872865
+                                 |
+                  residence_type |
+               Suburban or town  |   .0454593     .05219     0.87   0.384    -.0569702    .1478887
+                  Rural or farm  |   -.056887    .067582    -0.84   0.400    -.1895253    .0757512
+                                 |
+                        religion |
+                        Buddism  |  -.0566266   .0723579    -0.78   0.434    -.1986382    .0853851
+                         Daoism  |   .0150879   .0704493     0.21   0.830    -.1231779    .1533537
+                           Folk  |  -.0346146   .0598598    -0.58   0.563     -.152097    .0828679
+                       Catholic  |  -.0846362   .2165557    -0.39   0.696    -.5096544     .340382
+                      Christian  |   .1053604    .106375     0.99   0.322    -.1034141    .3141349
+                                 |
+                     pernet_size |  -.0109982   .0147909    -0.74   0.457    -.0400271    .0180308
+                         kin_IQV |   .0374776   .0547789     0.68   0.494     -.070033    .1449882
+                      female_IQV |   .0672734   .0569116     1.18   0.237    -.0444228    .1789696
+                     married_IQV |   .0977345   .0560916     1.74   0.082    -.0123525    .2078215
+                          age_sd |  -.0083281   .0037228    -2.24   0.026    -.0156344   -.0010217
+                      eduyear_sd |   .0160815   .0146298     1.10   0.272    -.0126314    .0447943
+            subjective_status_sd |   .0883822   .0317885     2.78   0.006     .0259932    .1507712
+                           _cons |   1.750457   .2420927     7.23   0.000     1.275319    2.225595
+--------------------------------------------------------------------------------------------------
+
+. est store model_11
+
+. coefplot  (., if(@ll<0 & @ul>0)) (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         keep(pernet_size kin_IQV female_IQV married_IQV age_sd eduyear_sd subjective_status_sd) ///
+>         coeflabels(pernet_size = "Network size" kin_IQV = "IQV of kin ties" female_IQV = "IQV of alters' gender" /// 
+>         age_sd = "SD of alters' age" married_IQV = "IQV of marital status" eduyear_sd = "SD of alters' years of education" ///
+>         subjective_status_sd = "SD of alters' social status") ///
+>         p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*1.4)) msize(*1.35) ylabel( ,labsize(*0.9)) off
+> set(0) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall))
+
+. graph export "Fig3-5.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-5.jpg saved as JPG format
+
+. 
+. // Model 12 Functional content - Heterogeneity with interaction //
+. reg loneliness $demographic c.pernet_size kin_IQV i.female##c.female_IQV i.marital##c.married_IQV c.age##c.age_sd c.eduyear##c.eduye
+> ar_sd c.subjective_status##c.subjective_status_sd if !isolated  [iw=wsel] 
+note: 1.female omitted because of collinearity.
+note: age omitted because of collinearity.
+note: eduyear omitted because of collinearity.
+note: subjective_status omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =       921
+-------------+----------------------------------   F(34, 886)      =      2.24
+       Model |  33.5513408        34  .986804142   Prob > F        =    0.0001
+    Residual |  390.051017       886  .440238168   R-squared       =    0.0792
+-------------+----------------------------------   Adj R-squared   =    0.0447
+       Total |  423.602358       920  .460437345   Root MSE        =    .66321
+
+------------------------------------------------------------------------------------------------------------
+                                loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------------------------------------+----------------------------------------------------------------
+                                    female |   .0178987   .0855595     0.21   0.834    -.1500243    .1858217
+                                       age |  -.0024807    .011144    -0.22   0.824    -.0243523     .019391
+                                           |
+                               c.age#c.age |   .0000488    .000115     0.42   0.672     -.000177    .0002745
+                                           |
+                                   eduyear |  -.0009007   .0143329    -0.06   0.950    -.0290312    .0272298
+                                 lnrincome |   .0143933   .0446683     0.32   0.747    -.0732748    .1020614
+                         subjective_status |  -.0324772   .0227301    -1.43   0.153    -.0770883     .012134
+                                           |
+                          employment_short |
+                                 Employer  |  -.0429452   .1305154    -0.33   0.742    -.2991006    .2132101
+              Self-employed or Part-timer  |  -.1125727   .1041729    -1.08   0.280    -.3170272    .0918818
+                                 Employed  |   .0249233   .0696947     0.36   0.721    -.1118628    .1617093
+                                           |
+                                   marital |
+                    Married or cohabiting  |  -.2888604   .0992632    -2.91   0.004    -.4836788   -.0940419
+          Separated, divorced, or widowed  |   .0345809   .1536005     0.23   0.822    -.2668823    .3360441
+                                           |
+                                    ethnic |
+                                    Hakka  |   .0130029    .069236     0.19   0.851    -.1228829    .1488887
+                               Mainlander  |   .0817749   .0890848     0.92   0.359    -.0930669    .2566168
+                      Aboriginal or other  |   .0826013   .1636295     0.50   0.614    -.2385453    .4037479
+                                           |
+                            residence_type |
+                         Suburban or town  |   .0432926   .0523259     0.83   0.408    -.0594046    .1459898
+                            Rural or farm  |   -.065367   .0681438    -0.96   0.338    -.1991091    .0683751
+                                           |
+                                  religion |
+                                  Buddism  |   -.045925   .0725836    -0.63   0.527    -.1883809    .0965308
+                                   Daoism  |   .0222279    .070689     0.31   0.753    -.1165096    .1609653
+                                     Folk  |   -.033347   .0599325    -0.56   0.578    -.1509732    .0842792
+                                 Catholic  |  -.0804798   .2171943    -0.37   0.711     -.506755    .3457955
+                                Christian  |   .1179744   .1066418     1.11   0.269    -.0913255    .3272743
+                                           |
+                               pernet_size |  -.0091869   .0148752    -0.62   0.537    -.0383816    .0200077
+                                   kin_IQV |   .0396857   .0564673     0.70   0.482    -.0711395    .1505109
+                                  1.female |          0  (omitted)
+                                female_IQV |    .039999   .0815189     0.49   0.624    -.1199936    .1999916
+                                           |
+                       female#c.female_IQV |
+                                        1  |   .0613319   .1098583     0.56   0.577     -.154281    .2769448
+                                           |
+                               married_IQV |  -.0636163   .0994853    -0.64   0.523    -.2588707    .1316381
+                                           |
+                     marital#c.married_IQV |
+                    Married or cohabiting  |   .2402272   .1222632     1.96   0.050     .0002679    .4801865
+          Separated, divorced, or widowed  |   .1421325   .2044553     0.70   0.487    -.2591406    .5434056
+                                           |
+                                       age |          0  (omitted)
+                                    age_sd |   .0069619   .0106067     0.66   0.512    -.0138553    .0277791
+                                           |
+                            c.age#c.age_sd |  -.0003387   .0002403    -1.41   0.159    -.0008103    .0001329
+                                           |
+                                   eduyear |          0  (omitted)
+                                eduyear_sd |  -.0186366   .0634959    -0.29   0.769    -.1432565    .1059833
+                                           |
+                    c.eduyear#c.eduyear_sd |    .002471   .0043154     0.57   0.567    -.0059986    .0109406
+                                           |
+                         subjective_status |          0  (omitted)
+                      subjective_status_sd |    .096242     .08461     1.14   0.256    -.0698174    .2623015
+                                           |
+c.subjective_status#c.subjective_status_sd |  -.0018118   .0157614    -0.11   0.909    -.0327459    .0291222
+                                           |
+                                     _cons |   1.727519   .3256269     5.31   0.000     1.088429    2.366609
+------------------------------------------------------------------------------------------------------------
+
+. est store model_12
+
+. coefplot (., if(@ll<0 & @ul>0)) (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small))  ///
+>         keep(pernet_size kin_IQV female_IQV married_IQV age_sd eduyear_sd subjective_status_sd 1.female#c.female_IQV 2.marital#c.mar
+> ried_IQV 3.marital#c.married_IQV c.age#c.age_sd c.eduyear#c.eduyear_sd c.subjective_status#c.subjective_status_sd) ///
+>         order(pernet_size kin_IQV female_IQV married_IQV age_sd eduyear_sd subjective_status_sd *#*) ///
+>         headings(1.female#c.female_IQV = `"{bf:Interaction term}"' , labsize(*0.9)) ///
+>         coeflabels(pernet_size = "Network size" kin_IQV = "IQV of kin ties" female_IQV = "IQV of alters' gender" /// 
+>         age_sd = "SD of alters' age" married_IQV = "IQV of marital status" eduyear_sd = "SD of alters' years of education" ///
+>         subjective_status_sd = "SD of alters' social status" 1.female#c.female_IQV = "Female * IQV of alters' gender" ///
+>         2.marital#c.married_IQV = "Married or cohabiting * IQV of marital status" ///
+>         3.marital#c.married_IQV = "Separated, divorced, or widowed * IQV of marital status" ///
+>         c.age#c.age_sd = "Age * SD of alters' age" c.eduyear#c.eduyear_sd = "Year of education * SD of alters' years of education" /
+> //
+>         c.subjective_status#c.subjective_status_sd = "Subjective social status * SD of alters' social status") ///
+>         p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*1.)) msize(*1.) ylabel( ,labsize(*0.8)) offset
+> (0) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall))
+
+. graph export "Fig3-6.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-6.jpg saved as JPG format
+
+. 
+. // Model 13 Functional content - Ego-alter similarity //
+. reg loneliness $demographic c.pernet_size gender_EI_index married_EI_index age_distance eduyear_distance subjective_status_distance 
+> if !isolated  [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,075
+-------------+----------------------------------   F(27, 1047)     =      3.00
+       Model |   34.413247        27   1.2745647   Prob > F        =    0.0000
+    Residual |  444.839425     1,047  .424870511   R-squared       =    0.0718
+-------------+----------------------------------   Adj R-squared   =    0.0484
+       Total |  479.252672     1,074  .446231538   Root MSE        =    .65164
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0383308   .0428838     0.89   0.372    -.0458172    .1224788
+                             age |   .0021586    .009467     0.23   0.820    -.0164179    .0207351
+                                 |
+                     c.age#c.age |  -.0000633   .0000994    -0.64   0.525    -.0002583    .0001318
+                                 |
+                         eduyear |  -.0000672   .0082638    -0.01   0.994    -.0162827    .0161483
+                       lnrincome |   .0198245   .0394645     0.50   0.616     -.057614     .097263
+               subjective_status |  -.0206241   .0149573    -1.38   0.168    -.0499737    .0087256
+                                 |
+                employment_short |
+                       Employer  |  -.0941288   .1185571    -0.79   0.427    -.3267654    .1385078
+    Self-employed or Part-timer  |  -.1345352   .0866064    -1.55   0.121    -.3044771    .0354068
+                       Employed  |  -.0155961   .0624357    -0.25   0.803    -.1381095    .1069174
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1584583   .0661811    -2.39   0.017     -.288321   -.0285955
+Separated, divorced, or widowed  |   .1210818    .096152     1.26   0.208    -.0675908    .3097543
+                                 |
+                          ethnic |
+                          Hakka  |   .0587151    .063737     0.92   0.357    -.0663517    .1837818
+                     Mainlander  |   .0267521   .0825387     0.32   0.746    -.1352081    .1887123
+            Aboriginal or other  |   .2338516   .1432358     1.63   0.103    -.0472103    .5149136
+                                 |
+                  residence_type |
+               Suburban or town  |   .0166591   .0484235     0.34   0.731     -.078359    .1116772
+                  Rural or farm  |  -.1465167   .0618287    -2.37   0.018     -.267839   -.0251944
+                                 |
+                        religion |
+                        Buddism  |  -.0567942   .0657961    -0.86   0.388    -.1859015    .0723131
+                         Daoism  |   .0070557   .0638219     0.11   0.912    -.1181777     .132289
+                           Folk  |  -.0063464   .0545534    -0.12   0.907    -.1133929    .1007001
+                       Catholic  |  -.2842183   .2315628    -1.23   0.220    -.7385983    .1701617
+                      Christian  |   .0465601   .1035583     0.45   0.653    -.1566454    .2497655
+                                 |
+                     pernet_size |   .0109736   .0121848     0.90   0.368    -.0129357     .034883
+                 gender_EI_index |  -.0088413   .0314823    -0.28   0.779    -.0706169    .0529343
+                married_EI_index |     .04209   .0376058     1.12   0.263    -.0317012    .1158813
+                    age_distance |  -.0019482   .0040796    -0.48   0.633    -.0099534     .006057
+                eduyear_distance |    -.00952   .0148297    -0.64   0.521    -.0386193    .0195793
+      subjective_status_distance |   .0522276   .0284993     1.83   0.067    -.0036946    .1081499
+                           _cons |   1.682758   .2277767     7.39   0.000     1.235807    2.129709
+--------------------------------------------------------------------------------------------------
+
+. est store model_13
+
+. coefplot (., if(@ll<0 & @ul>0)) (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         keep(pernet_size gender_EI_index age_distance married_EI_index eduyear_distance subjective_status_distance) ///
+>         coeflabels(pernet_size = "Network size"  gender_EI_index = "EI index of gender" /// 
+>         age_distance = "Distance of age" married_EI_index = "EI index of marital status" eduyear_distance = "Distacnce of years of e
+> ducation" ///
+>         subjective_status_distance = "Distacnce of social status") ///
+>         p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*1.4)) msize(*1.35) ylabel( ,labsize(*0.9)) off
+> set(0) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall))
+
+. graph export "Fig3-7.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-7.jpg saved as JPG format
+
+. 
+. // Model 14 Functional content - Ego-alter similarity with interactoin //
+. reg loneliness $demographic c.pernet_size i.female##c.gender_EI_index i.marital##c.married_EI_index c.age##c.age_distance c.eduyear#
+> #c.eduyear_distance c.subjective_status##c.subjective_status_distance if !isolated  [iw=wsel] 
+note: 1.female omitted because of collinearity.
+note: age omitted because of collinearity.
+note: eduyear omitted because of collinearity.
+note: subjective_status omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =     1,075
+-------------+----------------------------------   F(33, 1041)     =      2.62
+       Model |  36.7009565        33   1.1121502   Prob > F        =    0.0000
+    Residual |  442.551715     1,041  .425121724   R-squared       =    0.0766
+-------------+----------------------------------   Adj R-squared   =    0.0478
+       Total |  479.252672     1,074  .446231538   Root MSE        =    .65183
+
+------------------------------------------------------------------------------------------------------------------
+                                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------------------------------------------+----------------------------------------------------------------
+                                          female |   .0426625   .0434154     0.98   0.326    -.0425292    .1278542
+                                             age |   .0029681   .0100335     0.30   0.767    -.0167202    .0226563
+                                                 |
+                                     c.age#c.age |  -.0000544   .0001035    -0.53   0.599    -.0002574    .0001486
+                                                 |
+                                         eduyear |  -.0069107   .0108936    -0.63   0.526    -.0282866    .0144652
+                                       lnrincome |   .0241549   .0396209     0.61   0.542     -.053591    .1019008
+                               subjective_status |  -.0182647    .019494    -0.94   0.349    -.0565167    .0199873
+                                                 |
+                                employment_short |
+                                       Employer  |  -.1068848   .1193361    -0.90   0.371    -.3410514    .1272819
+                    Self-employed or Part-timer  |  -.1438101   .0870179    -1.65   0.099    -.3145605    .0269403
+                                       Employed  |   -.019117   .0628749    -0.30   0.761    -.1424931     .104259
+                                                 |
+                                         marital |
+                          Married or cohabiting  |  -.1125547   .0715187    -1.57   0.116    -.2528918    .0277825
+                Separated, divorced, or widowed  |   .1464339   .1011303     1.45   0.148    -.0520086    .3448763
+                                                 |
+                                          ethnic |
+                                          Hakka  |   .0590831   .0640702     0.92   0.357    -.0666383    .1848046
+                                     Mainlander  |   .0246127    .082757     0.30   0.766    -.1377769    .1870024
+                            Aboriginal or other  |   .2382532   .1441082     1.65   0.099    -.0445223    .5210288
+                                                 |
+                                  residence_type |
+                               Suburban or town  |   .0173855   .0485357     0.36   0.720    -.0778535    .1126245
+                                  Rural or farm  |  -.1456034   .0622711    -2.34   0.020    -.2677946   -.0234122
+                                                 |
+                                        religion |
+                                        Buddism  |  -.0548756   .0659391    -0.83   0.405    -.1842642    .0745131
+                                         Daoism  |   .0104884   .0641836     0.16   0.870    -.1154557    .1364325
+                                           Folk  |   .0013501   .0548837     0.02   0.980    -.1063452    .1090454
+                                       Catholic  |  -.3117866   .2333552    -1.34   0.182    -.7696868    .1461135
+                                      Christian  |   .0529139   .1040693     0.51   0.611    -.1512955    .2571233
+                                                 |
+                                     pernet_size |   .0104571   .0123618     0.85   0.398    -.0137998    .0347139
+                                        1.female |          0  (omitted)
+                                 gender_EI_index |  -.0324332   .0420943    -0.77   0.441    -.1150326    .0501661
+                                                 |
+                        female#c.gender_EI_index |
+                                              1  |   .0581389   .0594606     0.98   0.328    -.0585375    .1748153
+                                                 |
+                                married_EI_index |  -.0390982   .0620628    -0.63   0.529    -.1608807    .0826842
+                                                 |
+                      marital#c.married_EI_index |
+                          Married or cohabiting  |   .1482811   .0846893     1.75   0.080    -.0179001    .3144623
+                Separated, divorced, or widowed  |   .0618755   .1144737     0.54   0.589    -.1627501     .286501
+                                                 |
+                                             age |          0  (omitted)
+                                    age_distance |   .0046813   .0106744     0.44   0.661    -.0162646    .0256271
+                                                 |
+                            c.age#c.age_distance |  -.0001462   .0002251    -0.65   0.516     -.000588    .0002956
+                                                 |
+                                         eduyear |          0  (omitted)
+                                eduyear_distance |  -.0341397   .0286694    -1.19   0.234     -.090396    .0221167
+                                                 |
+                    c.eduyear#c.eduyear_distance |   .0026962   .0024131     1.12   0.264    -.0020389    .0074313
+                                                 |
+                               subjective_status |          0  (omitted)
+                      subjective_status_distance |   .0630839   .0660217     0.96   0.340    -.0664669    .1926347
+                                                 |
+c.subjective_status#c.subjective_status_distance |  -.0022883   .0140409    -0.16   0.871      -.02984    .0252634
+                                                 |
+                                           _cons |   1.679428   .2869016     5.85   0.000     1.116457    2.242399
+------------------------------------------------------------------------------------------------------------------
+
+. est store model_14
+
+. coefplot (., if(@ll<0 & @ul>0)) (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         keep(pernet_size gender_EI_index age_distance married_EI_index eduyear_distance subjective_status_distance 1.female#c.gender
+> _EI_index 2.marital#c.married_EI_index 3.marital#c.married_EI_index c.age#c.age_distance c.eduyear#c.eduyear_distance c.subjective_s
+> tatus#c.subjective_status_distance) ///
+>         order(pernet_size gender_EI_index married_EI_index age_distance eduyear_distance subjective_status_distance *#*) ///
+>         headings(1.female#c.gender_EI_index = `"{bf:Interaction term}"', labsize(*0.9)) ///
+>         coeflabels(pernet_size = "Network size"  gender_EI_index = "EI index of gender" /// 
+>         age_distance = "Distance of age" married_EI_index = "EI index of marital status" eduyear_distance = "Distacnce of years of e
+> ducation" ///
+>         subjective_status_distance = "Distacnce of social status" 1.female#c.gender_EI_index = "Female * EI index of gender" ///
+>         2.marital#c.married_EI_index = "Married or cohabiting * EI index of marital status"  ///
+>         3.marital#c.married_EI_index = "Separated, divorced, or widowed * EI index of marital status" /// 
+>         c.age#c.age_distance = "Age * distance of age" c.eduyear#c.eduyear_distance = "Years of education * distacnce of years of ed
+> ucation" ///
+>         c.subjective_status#c.subjective_status_distance= "Subjective social status * distacnce of social status") ///
+>         p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*1.)) msize(*1.) ylabel( ,labsize(*0.8)) offset
+> (0) ///
+>         note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Results a
+> re adjusted based on the sampling weight.", size(vsmall))
+
+. graph export "Fig3-8.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-8.jpg saved as JPG format
+
+.         
+. // Margins plot: Marital status x EI index of marital status // 
+. reg loneliness $demographic c.pernet_size c.married_EI_index##i.marital if !isolated [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,175
+-------------+----------------------------------   F(25, 1149)     =      3.33
+       Model |  36.0531933        25  1.44212773   Prob > F        =    0.0000
+    Residual |  498.191982     1,149  .433587452   R-squared       =    0.0675
+-------------+----------------------------------   Adj R-squared   =    0.0474
+       Total |  534.245175     1,174  .455064034   Root MSE        =    .65841
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0473057   .0413089     1.15   0.252    -.0337437     .128355
+                             age |  -.0016359   .0091783    -0.18   0.859    -.0196441    .0163723
+                                 |
+                     c.age#c.age |  -.0000218   .0000963    -0.23   0.821    -.0002108    .0001672
+                                 |
+                         eduyear |   .0003491   .0079315     0.04   0.965    -.0152127     .015911
+                       lnrincome |   .0335165   .0385471     0.87   0.385     -.042114    .1091471
+               subjective_status |  -.0257418   .0139829    -1.84   0.066    -.0531766    .0016931
+                                 |
+                employment_short |
+                       Employer  |  -.0951622   .1148133    -0.83   0.407    -.3204293    .1301049
+    Self-employed or Part-timer  |  -.1283082   .0840642    -1.53   0.127    -.2932448    .0366284
+                       Employed  |  -.0362643   .0600094    -0.60   0.546    -.1540047     .081476
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1060014   .0667413    -1.59   0.113    -.2369498     .024947
+Separated, divorced, or widowed  |   .1616947   .0954789     1.69   0.091    -.0256379    .3490273
+                                 |
+                          ethnic |
+                          Hakka  |   .0650209   .0612803     1.06   0.289     -.055213    .1852548
+                     Mainlander  |   .0268278   .0814031     0.33   0.742    -.1328876    .1865433
+            Aboriginal or other  |   .1711798   .1315419     1.30   0.193    -.0869095     .429269
+                                 |
+                  residence_type |
+               Suburban or town  |   .0268324   .0469399     0.57   0.568    -.0652651    .1189299
+                  Rural or farm  |  -.0967214    .059189    -1.63   0.103     -.212852    .0194093
+                                 |
+                        religion |
+                        Buddism  |  -.0615017   .0633631    -0.97   0.332     -.185822    .0628186
+                         Daoism  |   .0073015    .062702     0.12   0.907    -.1157217    .1303248
+                           Folk  |   .0105598   .0529972     0.20   0.842    -.0934225     .114542
+                       Catholic  |  -.1821838   .2127907    -0.86   0.392    -.5996857    .2353182
+                      Christian  |   .1359273    .097698     1.39   0.164    -.0557591    .3276136
+                                 |
+                     pernet_size |   .0135073   .0113148     1.19   0.233    -.0086927    .0357072
+                married_EI_index |  -.0104224   .0500381    -0.21   0.835    -.1085986    .0877539
+                                 |
+      marital#c.married_EI_index |
+          Married or cohabiting  |   .1061636   .0726636     1.46   0.144    -.0364046    .2487317
+Separated, divorced, or widowed  |   .0710395    .105118     0.68   0.499    -.1352053    .2772844
+                                 |
+                           _cons |   1.720307   .2097107     8.20   0.000     1.308848    2.131765
+--------------------------------------------------------------------------------------------------
+
+. margins, at(married_EI_index=(-1(0.25)0.75) marital=(1 2)) 
+
+Predictive margins                                       Number of obs = 1,207
+Model VCE: OLS
+
+Expression: Linear prediction, predict()
+1._at:  marital          =    1
+        married_EI_index =   -1
+2._at:  marital          =    1
+        married_EI_index = -.75
+3._at:  marital          =    1
+        married_EI_index =  -.5
+4._at:  marital          =    1
+        married_EI_index = -.25
+5._at:  marital          =    1
+        married_EI_index =    0
+6._at:  marital          =    1
+        married_EI_index =  .25
+7._at:  marital          =    1
+        married_EI_index =   .5
+8._at:  marital          =    1
+        married_EI_index =  .75
+9._at:  marital          =    2
+        married_EI_index =   -1
+10._at: marital          =    2
+        married_EI_index = -.75
+11._at: marital          =    2
+        married_EI_index =  -.5
+12._at: marital          =    2
+        married_EI_index = -.25
+13._at: marital          =    2
+        married_EI_index =    0
+14._at: marital          =    2
+        married_EI_index =  .25
+15._at: marital          =    2
+        married_EI_index =   .5
+16._at: marital          =    2
+        married_EI_index =  .75
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   1.568965    .062801    24.98   0.000     1.445748    1.692183
+          2  |    1.56636   .0541042    28.95   0.000     1.460206    1.672514
+          3  |   1.563754   .0471544    33.16   0.000     1.471236    1.656273
+          4  |   1.561149   .0428111    36.47   0.000     1.477152    1.645145
+          5  |   1.558543    .041893    37.20   0.000     1.476348    1.640738
+          6  |   1.555937    .044612    34.88   0.000     1.468407    1.643468
+          7  |   1.553332   .0503826    30.83   0.000      1.45448    1.652184
+          8  |   1.550726   .0583058    26.60   0.000     1.436329    1.665124
+          9  |     1.3568   .0364413    37.23   0.000     1.285301    1.428299
+         10  |   1.380736     .03136    44.03   0.000     1.319206    1.442265
+         11  |   1.404671   .0312874    44.90   0.000     1.343284    1.466058
+         12  |   1.428606   .0362535    39.41   0.000     1.357476    1.499737
+         13  |   1.452542    .044606    32.56   0.000     1.365023     1.54006
+         14  |   1.476477   .0548183    26.93   0.000     1.368922    1.584032
+         15  |   1.500412   .0660331    22.72   0.000     1.370853    1.629971
+         16  |   1.524348   .0778181    19.59   0.000     1.371666    1.677029
+------------------------------------------------------------------------------
+
+. marginsplot, title("") xtitle("{bf:EI index of marital}" "(higher values indicate greater dissimilarity)") ytitle("{bf:Predicted lon
+> eliness}") note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Model also contains all demographic variables." "(3) Result
+> s are adjusted based on the sampling weight.")
+
+Variables that uniquely identify margins: married_EI_index marital
+
+. graph export "Fig3-9.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig3-9.jpg saved as JPG format
+
+. 
+. /* Sensitivity anlysis */
+. // isolation + personality 
+. reg loneliness $demographic $personality i.isolated [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,759
+-------------+----------------------------------   F(25, 1733)     =      8.16
+       Model |   82.685081        25  3.30740324   Prob > F        =    0.0000
+    Residual |  702.646619     1,733  .405451021   R-squared       =    0.1053
+-------------+----------------------------------   Adj R-squared   =    0.0928
+       Total |    785.3317     1,758  .446718828   Root MSE        =     .6366
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0065531   .0326305     0.20   0.841    -.0574462    .0705524
+                             age |  -.0051442    .006033    -0.85   0.394     -.016977    .0066885
+                                 |
+                     c.age#c.age |   .0000206   .0000592     0.35   0.728    -.0000956    .0001368
+                                 |
+                         eduyear |   .0016136   .0057035     0.28   0.777    -.0095729    .0128001
+                       lnrincome |   .0285792   .0313244     0.91   0.362    -.0328584    .0900168
+               subjective_status |  -.0218349   .0098689    -2.21   0.027    -.0411911   -.0024786
+                                 |
+                employment_short |
+                       Employer  |  -.0166424   .0896267    -0.19   0.853    -.1924302    .1591454
+    Self-employed or Part-timer  |  -.0530862    .060947    -0.87   0.384    -.1726236    .0664511
+                       Employed  |  -.0221087   .0459397    -0.48   0.630    -.1122118    .0679943
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2173361    .047527    -4.57   0.000    -.3105524   -.1241199
+Separated, divorced, or widowed  |   .1265517   .0652828     1.94   0.053    -.0014897    .2545931
+                                 |
+                          ethnic |
+                          Hakka  |   .0599993     .04686     1.28   0.201    -.0319088    .1519074
+                     Mainlander  |   .1330416   .0670267     1.98   0.047     .0015799    .2645033
+            Aboriginal or other  |   .1447026   .1076631     1.34   0.179    -.0664606    .3558659
+                                 |
+                  residence_type |
+               Suburban or town  |  -.0039237   .0384909    -0.10   0.919    -.0794172    .0715699
+                  Rural or farm  |   -.078742   .0463769    -1.70   0.090    -.1697026    .0122187
+                                 |
+                        religion |
+                        Buddism  |   .0054221    .051331     0.11   0.916    -.0952552    .1060995
+                         Daoism  |   .0305982   .0510397     0.60   0.549    -.0695078    .1307041
+                           Folk  |    .041779     .04248     0.98   0.325    -.0415384    .1250965
+                       Catholic  |  -.2183297   .1779809    -1.23   0.220    -.5674096    .1307503
+                      Christian  |    .191071   .0801236     2.38   0.017     .0339218    .3482201
+                                 |
+                           trust |  -.0541453   .0214377    -2.53   0.012    -.0961918   -.0120988
+                        outgoing |  -.0685661   .0137052    -5.00   0.000    -.0954466   -.0416856
+                  lnindependence |  -.0207887   .0105395    -1.97   0.049    -.0414602   -.0001172
+                      1.isolated |  -.1682944     .03713    -4.53   0.000    -.2411188   -.0954701
+                           _cons |   2.100341   .1693672    12.40   0.000     1.768155    2.432527
+--------------------------------------------------------------------------------------------------
+
+. est store model_15
+
+. coefplot (., if(@ll<0 & @ul>0)) (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         groups(?.marital = `""{bf:Marital status}" "(ref. Single)""' ///
+>                    ?.religion = `""{bf:Religion}" "(ref. No religion)""' ///
+>                    ?.employment_short = `""{bf:Employment status}" "(ref. Unemployed)""' ///
+>                    ?.ethnic = `""{bf:Ethnicity}" "(ref. Minan)""' ///
+>                    ?.residence_type = `""{bf:Residential type}" "(ref. Metropolitan)""',labsize(*0.6)) ///
+>         headings(trust = `"{bf:Perseonalilty}"' 1.isolated = `"{bf:}"',labsize(*0.6)) ///       
+>         coeflabels(female = "Female" age = "Age" c.age#c.age = "Age{superscript:2}" 1.urban = "Living in urban" ///
+>                            eduyear = "Years of education" lnrincome = "Personal income (logged)" subjective_status = "Subjective soc
+> ial status" ///
+>                            2.employment_short = "Employer" 3.employment_short = "Self-employed or Part-timer" 4.employment_short = "
+> Employed " ///
+>                            2.marital = "Married or cohabiting" 3.marital = "Separated, divorced, or widowed" ///
+>                            2.residence_type = "Suburban or town" 3.residence_type = "Rural or farm" ///
+>                            2.ethnic = " Hakka" 3.ethnic = "Mainlander " 4.ethnic = "Aboriginal or other" ///
+>                            1.religion = "Buddism" 2.religion = "Daoism" 3.religion = "Folk Religion" 4.religion = "Catholic" 5.relig
+> ion = "Christian" ///
+>                            trust = "Trust" outgoing = "Outgoing" lnindependence = "Independence" 1.isolated = "Isolated") ///
+>          p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*0.7)) msize(*0.8) ylabel( ,labsize(*0.53)) of
+> fset(0) ///
+>          note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Results are adjusted based on the sampling weight.", size(vsm
+> all))
+
+. graph export "Fig4-1.jpg", replace 
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig4-1.jpg saved as JPG format
+
+. 
+. coefplot model_4 model_15, ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         keep(trust outgoing lnindependence 1.isolated) ///
+>         order(trust outgoing lnindependence . 1.isolated) /// 
+>         coeflabels(trust = "Trust" outgoing = "Outgoing" lnindependence = "Independence" 1.isolated = "Isolated") ///
+>         p1(pstyle(p1)) p2(pstyle(p2)) legend(off) xsize(1.35) ysize(1) ciopts(lwidth(*1.4)) msize(*1.35) ylabel( ,labsize(*1)) ///
+>         note("{it:Note:}" "(1) Model also contains all demographic variables." "(2) Results are adjusted based on the sampling weigh
+> t.", size(vsmall)) 
+
+. graph export "Fig4-2.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig4-2.jpg saved as JPG format
+
+. 
+. reg loneliness $demographic $personality c.pernet_size##c.pernet_size if !isolated [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,186
+-------------+----------------------------------   F(26, 1159)     =      4.97
+       Model |  55.1940562        26  2.12284831   Prob > F        =    0.0000
+    Residual |   495.68073     1,159  .427679663   R-squared       =    0.1002
+-------------+----------------------------------   Adj R-squared   =    0.0805
+       Total |  550.874786     1,185  .464873237   Root MSE        =    .65379
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0656023    .040819     1.61   0.108     -.014485    .1456896
+                             age |  -.0039395   .0088036    -0.45   0.655    -.0212124    .0133333
+                                 |
+                     c.age#c.age |  -7.12e-06   .0000927    -0.08   0.939     -.000189    .0001747
+                                 |
+                         eduyear |   .0013357   .0078342     0.17   0.865    -.0140351    .0167065
+                       lnrincome |   .0417194   .0384085     1.09   0.278    -.0336386    .1170775
+               subjective_status |  -.0200918   .0138453    -1.45   0.147    -.0472565    .0070729
+                                 |
+                employment_short |
+                       Employer  |  -.0432301   .1135875    -0.38   0.704    -.2660902    .1796301
+    Self-employed or Part-timer  |  -.0975374   .0835526    -1.17   0.243    -.2614688    .0663939
+                       Employed  |  -.0330932   .0592122    -0.56   0.576    -.1492682    .0830818
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1519867   .0583416    -2.61   0.009    -.2664537   -.0375197
+Separated, divorced, or widowed  |   .2199645   .0895629     2.46   0.014      .044241    .3956879
+                                 |
+                          ethnic |
+                          Hakka  |   .0448178   .0609087     0.74   0.462    -.0746859    .1643215
+                     Mainlander  |   .0307524    .079991     0.38   0.701     -.126191    .1876958
+            Aboriginal or other  |   .1915805   .1334526     1.44   0.151    -.0702552    .4534162
+                                 |
+                  residence_type |
+               Suburban or town  |   .0085771   .0462752     0.19   0.853    -.0822155    .0993698
+                  Rural or farm  |  -.1107574    .058607    -1.89   0.059    -.2257452    .0042303
+                                 |
+                        religion |
+                        Buddism  |  -.0511759   .0631503    -0.81   0.418    -.1750776    .0727259
+                         Daoism  |   .0045546   .0621982     0.07   0.942    -.1174791    .1265884
+                           Folk  |    .032473   .0521646     0.62   0.534    -.0698747    .1348207
+                       Catholic  |  -.2004672   .2025188    -0.99   0.322    -.5978116    .1968772
+                      Christian  |   .1420493   .0949719     1.50   0.135    -.0442868    .3283854
+                                 |
+                           trust |  -.0797496   .0267354    -2.98   0.003    -.1322048   -.0272945
+                        outgoing |   -.095375   .0175942    -5.42   0.000    -.1298951   -.0608549
+                  lnindependence |  -.0193609   .0136119    -1.42   0.155    -.0460675    .0073458
+                     pernet_size |   .0732388   .0487862     1.50   0.134    -.0224803    .1689579
+                                 |
+     c.pernet_size#c.pernet_size |  -.0070564   .0063623    -1.11   0.268    -.0195393    .0054266
+                                 |
+                           _cons |   2.058748   .2227299     9.24   0.000     1.621749    2.495747
+--------------------------------------------------------------------------------------------------
+
+. est store model_16
+
+. coefplot (., if(@ll<0 & @ul>0)) (., if(@ll>0 | @ul<0)), drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}"
+> , size(small)) ///
+>         groups(?.marital = `""{bf:Marital status}" "(ref. Single)""' ///
+>                    ?.religion = `""{bf:Religion}" "(ref. No religion)""' ///
+>                    ?.employment_short = `""{bf:Employment status}" "(ref. Unemployed)""' ///
+>                    ?.ethnic = `""{bf:Ethnicity}" "(ref. Minan)""' ///
+>                    ?.residence_type = `""{bf:Residential type}" "(ref. Metropolitan)""', labsize(*0.6)) ///
+>         headings(trust = `"{bf:Perseonalilty}"' pernet_size = `"{bf:}"', labsize(*0.6)) ///     
+>         coeflabels(female = "Female" age = "Age" c.age#c.age = "Age{superscript:2}" 1.urban = "Living in urban" ///
+>                            eduyear = "Years of education" lnrincome = "Personal income (logged)" subjective_status = "Subjective soc
+> ial status" ///
+>                            2.employment_short = "Employer" 3.employment_short = "Self-employed or Part-timer" 4.employment_short = "
+> Employed " ///
+>                            2.marital = "Married or cohabiting" 3.marital = "Separated, divorced, or widowed" ///
+>                            2.residence_type = "Suburban or town" 3.residence_type = "Rural or farm" ///
+>                            2.ethnic = " Hakka" 3.ethnic = "Mainlander " 4.ethnic = "Aboriginal or other" ///
+>                            1.religion = "Buddism" 2.religion = "Daoism" 3.religion = "Folk Religion" 4.religion = "Catholic/Christia
+> n" ///
+>                            pernet_size = "Network size" c.pernet_size#c.pernet_size = "Network size{superscript:2}" /// 
+>                            trust = "Trust" outgoing = "Outgoing" lnindependence = "Independence" 4.religion = "Catholic" 5.religion 
+> = "Christian") ///
+>          p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.55) ysize(1) ciopts(lwidth(*0.7)) msize(*0.8) ylabel( ,labsize(*0.53)) of
+> fset(0) ///
+>          note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Results are adjusted based on the sampling weight.", size(vsm
+> all))
+
+. graph export "Fig4-3.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig4-3.jpg saved as JPG format
+
+. 
+. // three sclae of loneliness 
+. reg lack_companionship  $demographic i.isolated [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,772
+-------------+----------------------------------   F(22, 1749)     =      6.53
+       Model |  100.619427        22  4.57361033   Prob > F        =    0.0000
+    Residual |   1225.2279     1,749  .700530529   R-squared       =    0.0759
+-------------+----------------------------------   Adj R-squared   =    0.0647
+       Total |  1325.84732     1,771  .748643322   Root MSE        =    .83678
+
+--------------------------------------------------------------------------------------------------
+              lack_companionship | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |  -.0364073   .0424769    -0.86   0.392    -.1197182    .0469037
+                             age |    -.01428   .0078215    -1.83   0.068    -.0296204    .0010604
+                                 |
+                     c.age#c.age |   .0001188   .0000767     1.55   0.122    -.0000316    .0002691
+                                 |
+                         eduyear |   .0075188   .0074253     1.01   0.311    -.0070447    .0220822
+                       lnrincome |   .0018632   .0408175     0.05   0.964    -.0781931    .0819194
+               subjective_status |  -.0245156   .0127979    -1.92   0.056    -.0496164    .0005853
+                                 |
+                employment_short |
+                       Employer  |   .0834658   .1173207     0.71   0.477    -.1466378    .3135695
+    Self-employed or Part-timer  |   .0193099   .0796233     0.24   0.808     -.136857    .1754768
+                       Employed  |   .0484222   .0601327     0.81   0.421    -.0695174    .1663617
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2520146   .0622216    -4.05   0.000    -.3740512    -.129978
+Separated, divorced, or widowed  |    .188747   .0853272     2.21   0.027      .021393    .3561009
+                                 |
+                          ethnic |
+                          Hakka  |   .0987265   .0613257     1.61   0.108    -.0215528    .2190058
+                     Mainlander  |   .0726178   .0877582     0.83   0.408    -.0995043    .2447399
+            Aboriginal or other  |   .1444559   .1384715     1.04   0.297    -.1271312     .416043
+                                 |
+                  residence_type |
+               Suburban or town  |   .0078288   .0504088     0.16   0.877    -.0910392    .1066967
+                  Rural or farm  |   -.061783   .0608501    -1.02   0.310    -.1811297    .0575636
+                                 |
+                        religion |
+                        Buddism  |   .0292675    .066735     0.44   0.661    -.1016214    .1601563
+                         Daoism  |   .0527027   .0665161     0.79   0.428    -.0777567    .1831621
+                           Folk  |   .0464573   .0553722     0.84   0.402    -.0621454      .15506
+                       Catholic  |  -.2980391   .2277987    -1.31   0.191    -.7448255    .1487473
+                      Christian  |   .2056038   .1049251     1.96   0.050    -.0001879    .4113955
+                                 |
+                      1.isolated |   -.189682    .048206    -3.93   0.000    -.2842293   -.0951346
+                           _cons |   2.030848   .2050023     9.91   0.000     1.628773    2.432924
+--------------------------------------------------------------------------------------------------
+
+. est store lack_companionship
+
+. reg lonely  $demographic i.isolated [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,770
+-------------+----------------------------------   F(22, 1747)     =      7.06
+       Model |  104.528802        22  4.75130917   Prob > F        =    0.0000
+    Residual |  1175.89698     1,747  .673095009   R-squared       =    0.0816
+-------------+----------------------------------   Adj R-squared   =    0.0705
+       Total |  1280.42578     1,769  .723813331   Root MSE        =    .82025
+
+--------------------------------------------------------------------------------------------------
+                          lonely | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   -.014524   .0416542    -0.35   0.727    -.0962214    .0671733
+                             age |  -.0013645   .0076858    -0.18   0.859    -.0164388    .0137099
+                                 |
+                     c.age#c.age |  -.0000307   .0000753    -0.41   0.684    -.0001784    .0001171
+                                 |
+                         eduyear |   -.008269   .0072889    -1.13   0.257    -.0225648    .0060268
+                       lnrincome |   .0500128    .040033     1.25   0.212    -.0285048    .1285304
+               subjective_status |  -.0355652   .0125687    -2.83   0.005    -.0602164    -.010914
+                                 |
+                employment_short |
+                       Employer  |  -.1085859   .1150412    -0.94   0.345    -.3342188     .117047
+    Self-employed or Part-timer  |  -.1138596   .0780646    -1.46   0.145    -.2669694    .0392502
+                       Employed  |  -.0906472   .0590853    -1.53   0.125    -.2065325    .0252381
+                                 |
+                         marital |
+          Married or cohabiting  |  -.3021424   .0611313    -4.94   0.000    -.4220406   -.1822442
+Separated, divorced, or widowed  |   .1528687    .083776     1.82   0.068     -.011443    .3171803
+                                 |
+                          ethnic |
+                          Hakka  |   .0634311   .0601215     1.06   0.292    -.0544867    .1813489
+                     Mainlander  |   .1757672    .086025     2.04   0.041     .0070445    .3444899
+            Aboriginal or other  |   .1601898   .1357391     1.18   0.238    -.1060384     .426418
+                                 |
+                  residence_type |
+               Suburban or town  |   .0088088   .0494156     0.18   0.859    -.0881111    .1057287
+                  Rural or farm  |  -.0876898   .0596813    -1.47   0.142    -.2047441    .0293644
+                                 |
+                        religion |
+                        Buddism  |   .0457862   .0654606     0.70   0.484    -.0826031    .1741755
+                         Daoism  |     .00542   .0652886     0.08   0.934    -.1226319     .133472
+                           Folk  |   .0397633    .054353     0.73   0.465    -.0668406    .1463671
+                       Catholic  |  -.3105232   .2233064    -1.39   0.165    -.7484992    .1274528
+                      Christian  |   .1979494   .1028737     1.92   0.054    -.0038191    .3997179
+                                 |
+                      1.isolated |  -.1925138   .0472696    -4.07   0.000    -.2852247   -.0998028
+                           _cons |   2.104302   .2011275    10.46   0.000     1.709826    2.498778
+--------------------------------------------------------------------------------------------------
+
+. est store lonely
+
+. reg excluded  $demographic i.isolated [iw=wsel] 
+
+      Source |       SS           df       MS      Number of obs   =     1,771
+-------------+----------------------------------   F(22, 1748)     =      4.47
+       Model |  34.3131159        22  1.55968709   Prob > F        =    0.0000
+    Residual |  609.794788     1,748  .348852854   R-squared       =    0.0533
+-------------+----------------------------------   Adj R-squared   =    0.0416
+       Total |  644.107904     1,770  .363902771   Root MSE        =    .59055
+
+--------------------------------------------------------------------------------------------------
+                        excluded | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0456652   .0299784     1.52   0.128    -.0131321    .1044624
+                             age |   .0065328   .0055196     1.18   0.237     -.004293    .0173586
+                                 |
+                     c.age#c.age |  -.0000849   .0000541    -1.57   0.117     -.000191    .0000212
+                                 |
+                         eduyear |   .0001246   .0052443     0.02   0.981     -.010161    .0104103
+                       lnrincome |   .0115745   .0288077     0.40   0.688    -.0449268    .0680758
+               subjective_status |  -.0319202   .0090261    -3.54   0.000    -.0496233    -.014217
+                                 |
+                employment_short |
+                       Employer  |  -.1444082   .0827699    -1.74   0.081    -.3067467    .0179304
+    Self-employed or Part-timer  |  -.1589876   .0559858    -2.84   0.005    -.2687938   -.0491813
+                       Employed  |  -.0298774     .04239    -0.70   0.481    -.1130179    .0532631
+                                 |
+                         marital |
+          Married or cohabiting  |  -.1184186    .043913    -2.70   0.007    -.2045462    -.032291
+Separated, divorced, or widowed  |   .0134151   .0602498     0.22   0.824    -.1047542    .1315844
+                                 |
+                          ethnic |
+                          Hakka  |   .0400526   .0432891     0.93   0.355    -.0448514    .1249565
+                     Mainlander  |   .1637612    .061936     2.64   0.008     .0422848    .2852377
+            Aboriginal or other  |   .1141207   .0977261     1.17   0.243    -.0775516     .305793
+                                 |
+                  residence_type |
+               Suburban or town  |  -.0005563   .0355457    -0.02   0.988    -.0702729    .0691604
+                  Rural or farm  |  -.0534637   .0428769    -1.25   0.213    -.1375592    .0306318
+                                 |
+                        religion |
+                        Buddism  |  -.0634653   .0471017    -1.35   0.178    -.1558468    .0289163
+                         Daoism  |   .0099349   .0469441     0.21   0.832    -.0821376    .1020073
+                           Folk  |  -.0230173   .0390815    -0.59   0.556    -.0996688    .0536342
+                       Catholic  |   -.117573   .1607736    -0.73   0.465    -.4329018    .1977558
+                      Christian  |   .1719578   .0740526     2.32   0.020     .0267168    .3171988
+                                 |
+                      1.isolated |  -.0904396   .0340858    -2.65   0.008    -.1572927   -.0235864
+                           _cons |   1.448409   .1446124    10.02   0.000     1.164778    1.732041
+--------------------------------------------------------------------------------------------------
+
+. est store excluded
+
+. coefplot (lack_companionship, if(@ll<0 & @ul>0) ) (lack_companionship, if(@ll>0 | @ul<0)), bylabel(lack companionship) || ///
+>                  (lonely, if(@ll<0 & @ul>0)) (lonely, if(@ll>0 | @ul<0)), bylabel(lonely) || ///
+>                  (excluded, if(@ll<0 & @ul>0)) (excluded, if(@ll>0 | @ul<0)), bylabel(excluded) ||, ///
+>         drop(_cons) xline(0) nolabels ///
+>         groups(?.marital = `""{bf:Marital status}" "(ref. Single)""' ///
+>                    ?.religion = `""{bf:Religion}" "(ref. No religion)""' ///
+>                    ?.employment_short = `""{bf:Employment status}" "(ref. Unemployed)""' ///
+>                    ?.ethnic = `""{bf:Ethnicity}" "(ref. Minan)""' ///
+>                    ?.residence_type = `""{bf:Residential type}" "(ref. Metropolitan)""',labsize(*0.7)) ///
+>         headings(trust = `"{bf:Perseonalilty}"' 1.isolated = `"{bf:}"',labsize(*0.7)) ///       
+>         coeflabels(female = "Female" age = "Age" c.age#c.age = "Age{superscript:2}" 1.urban = "Living in urban" ///
+>                            eduyear = "Years of education" lnrincome = "Personal income (logged)" subjective_status = "Subjective soc
+> ial status" ///
+>                            2.employment_short = "Employer" 3.employment_short = "Self-employed or Part-timer" 4.employment_short = "
+> Employed " ///
+>                            2.marital = "Married or cohabiting" 3.marital = "Separated, divorced, or widowed" ///
+>                            2.residence_type = "Suburban or town" 3.residence_type = "Rural or farm" ///
+>                            2.ethnic = " Hakka" 3.ethnic = "Mainlander " 4.ethnic = "Aboriginal or other" ///
+>                            1.religion = "Buddism" 2.religion = "Daoism" 3.religion = "Folk Religion" 4.religion = "Catholic" 5.relig
+> ion = "Christian" ///
+>                            trust = "Trust" outgoing = "Outgoing" lnindependence = "Independence" 1.isolated = "Isolated") ///
+>          p1(pstyle(p5)) p2(pstyle(p3)) legend(off) xsize(1.5) ysize(1) ciopts(lwidth(*0.7)) msize(*0.8) ylabel( ,labsize(*0.65)) off
+> set(0) ///
+>          byopts(compact cols(3))
+
+. graph export "Fig4-4.jpg", replace
+file /Users/Shengfu/Desktop/Projects/Personal Network and Loneliness/output/Fig4-4.jpg saved as JPG format
+
+. 
+. // standardized coefficients
+. preserve
+
+. center age eduyear lnrincome subjective_status, inplace standardize
+(modified variables: age eduyear lnrincome subjective_status)
+
+. reg loneliness $demographic [iw=wsel]
+
+      Source |       SS           df       MS      Number of obs   =     1,775
+-------------+----------------------------------   F(21, 1753)     =      7.06
+       Model |  61.7719654        21  2.94152216   Prob > F        =    0.0000
+    Residual |  730.695916     1,753  .416825964   R-squared       =    0.0779
+-------------+----------------------------------   Adj R-squared   =    0.0673
+       Total |  792.467881     1,774  .446712447   Root MSE        =    .64548
+
+--------------------------------------------------------------------------------------------------
+                      loneliness | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                          female |   .0134375   .0325463     0.41   0.680    -.0503962    .0772712
+                             age |  -.0746498   .0266851    -2.80   0.005    -.1269878   -.0223118
+                                 |
+                     c.age#c.age |   .0009868   .0181103     0.05   0.957    -.0345333    .0365069
+                                 |
+                         eduyear |   .0117334    .024376     0.48   0.630    -.0360757    .0595425
+                       lnrincome |   .0250135   .0218618     1.14   0.253    -.0178644    .0678914
+               subjective_status |  -.0510535   .0167032    -3.06   0.002    -.0838139   -.0182931
+                                 |
+                employment_short |
+                       Employer  |  -.0692869   .0904208    -0.77   0.444    -.2466309    .1080572
+    Self-employed or Part-timer  |  -.0903656   .0611753    -1.48   0.140    -.2103498    .0296185
+                       Employed  |  -.0300539   .0463105    -0.65   0.516    -.1208835    .0607758
+                                 |
+                         marital |
+          Married or cohabiting  |  -.2140422   .0479435    -4.46   0.000    -.3080746   -.1200097
+Separated, divorced, or widowed  |   .1221403   .0657982     1.86   0.064    -.0069109    .2511916
+                                 |
+                          ethnic |
+                          Hakka  |   .0627829   .0472915     1.33   0.184    -.0299708    .1555366
+                     Mainlander  |   .1403641    .067687     2.07   0.038     .0076084    .2731199
+            Aboriginal or other  |   .1403165   .1055853     1.33   0.184    -.0667698    .3474028
+                                 |
+                  residence_type |
+               Suburban or town  |   .0003528   .0387531     0.01   0.993    -.0756543      .07636
+                  Rural or farm  |  -.0760453    .046768    -1.63   0.104    -.1677722    .0156816
+                                 |
+                        religion |
+                        Buddism  |   .0089333   .0514629     0.17   0.862    -.0920018    .1098684
+                         Daoism  |   .0311907   .0512724     0.61   0.543    -.0693708    .1317523
+                           Folk  |   .0231309   .0426729     0.54   0.588    -.0605643    .1068261
+                       Catholic  |  -.2210251   .1754296    -1.26   0.208    -.5650984    .1230482
+                      Christian  |   .1973053   .0809185     2.44   0.015     .0385983    .3560123
+                                 |
+                           _cons |   1.520949   .0717797    21.19   0.000     1.380166    1.661732
+--------------------------------------------------------------------------------------------------
+
+. coefplot (., if(@ll<0 & @ul>0))  (., if(@ll>0 | @ul<0)), ///
+>         drop(_cons) xline(0) nolabels subtitle("{bf: Coefficients (DV: Loneliness)}", size(small)) ///
+>         groups(?.marital = `""{bf:Marital status}" "(ref. Single)""' ///
+>                    ?.religion = `""{bf:Religion}" "(ref. No religion)""' ///
+>                    ?.employment_short = `""{bf:Employment status}" "(ref. Unemployed)""' ///
+>                    ?.ethnic = `""{bf:Ethnicity}" "(ref. Minan)""' ///
+>                    ?.residence_type = `""{bf:Residential type}" "(ref. Metropolitan)""', labsize(*0.8)) ///
+>         coeflabels(female = "Female" age = "Age" c.age#c.age = "Age{superscript:2}" ///
+>                            eduyear = "Years of education" lnrincome = "Personal income (logged)" subjective_status = "Subjective soc
+> ial status" ///
+>                            2.employment_short = "Employer" 3.employment_short = "Self-employed or Part-timer" 4.employment_short = "
+> Employed" ///
+>                            2.marital = "Married or cohabiting" 3.marital = "Separaed, divorced, or widowed" ///
+>                            2.residence_type = "Suburban or town" 3.residence_type = "Rural or farm" ///
+>                            2.ethnic = " Hakka" 3.ethnic = "Mainlander" 4.ethnic = "Aboriginal or other" ///
+>                            1.religion = "Buddism" 2.religion = "Daoism" 3.religion = "Folk Religion" 4.religion = "Catholic" 5.relig
+> ion = "Christian") ///
+>          p1(pstyle(p5)) p2(pstyle(p3)) ciopts(lwidth(*0.95)) msize(*1.035) ylabel( ,labsize(*0.75)) legend(off) offset(0) ///
+>          note("{it:Note:}" "(1) Number of observations = `e(N)'." "(2) Results are adjusted based on the sampling weight.", size(vsm
+> all)) 
+
+. restore
+
+. 
+. /***************** Tables *****************/
+. 
+. lab var female "Gender"
+
+. lab define gender 0"Male" 1"Female" 
+
+. lab value female gender
+
+. lab var age "Age" 
+
+. lab var eduyear "Years of education"
+
+. lab var lnrincome "Personal income (logged)" 
+
+. lab var subjective_status "Subjective social status" 
+
+. lab var employment_short "Employment status"
+
+. lab var marital "Marital status"
+
+. lab var ethnic "Ethnicity"
+
+. lab var residence_type "Residential type"
+
+. lab var religion "Religion"
+
+. lab var loneliness "Loneliness"
+
+. lab var isolated "Social isolation"
+
+. lab define isolated 0"Not isolated" 1"Isolated" 
+
+. lab value isolated isolated
+
+. 
+. /* Table 1: Descriptive statistics */
+. // Continous: loneliness age eduyear lnrincome subjective_status
+. // Catergorical: female employment_short marital i.ethnic i.residence_type i.religion
+. dtable loneliness i.female age eduyear lnrincome subjective_status i.employment_short i.marital i.ethnic i.residence_type i.religion
+>  [iw=wsel], ///
+>         by(isolated) sample(Sample, statistic(frequency) place(seplabels) font(, nobold)) sformat("(n = %s)" frequency) ///
+>         nformat(%9.2g mean sd) nformat(%9.1g fvpercent) column(summary(M(SD) / n(%))) ///
+>         define(rangei = min max, delimiter("-")) sformat("[%s]" rangei) nformat(%16.0fc rangei) continuous(, statistic(mean sd)) ///
+>         factor(, font(, nobold)) ///
+>         title("") note("Note: Mean (SD) or N (%)") 
+command dtable is unrecognized
+r(199);
+
+end of do-file
+
+r(199);
+
+. do "/var/folders/_q/7nm19znd7d11rzql9lg9pqcw0000gn/T//SD13214.000000"
+
+. 
+. /* Table 2: Model 1-3 */
+. collect clear
+
+. collect create table2
+(current collection is table2)
+
+. collect _r_b _r_se: est restore model_1
+(results model_1 are active now)
+
+. collect _r_b _r_se: est restore model_2
+(results model_2 are active now)
+
+. collect _r_b _r_se: est restore model_3
+(results model_3 are active now)
+
+. collect layout (colname#result result[r2 r2_a N p_d]) (cmdset)
+(level p_d of dimension result not found)
+
+Collection: table2
+      Rows: colname#result result[r2 r2_a N p_d]
+   Columns: cmdset
+   Table 1: 84 x 3
+
+---------------------------------------------------------------
+                                |         1         2         3
+--------------------------------+------------------------------
+Gender                          |                              
+  Coefficient                   |  .0134375         0         0
+  Std. error                    |  .0325463         0         0
+Age                             |                              
+  Coefficient                   | -.0045675   .006077 -.0214634
+  Std. error                    |  .0060149  .0077644  .0095122
+Age # Age                       |                              
+  Coefficient                   |  3.21e-06 -.0000952  .0001608
+  Std. error                    |   .000059  .0000767  .0000936
+Years of education              |                              
+  Coefficient                   |  .0027303  .0048798 -.0028633
+  Std. error                    |  .0056722  .0076561  .0086352
+Personal income (logged)        |                              
+  Coefficient                   |  .0358066  .0413788   .050819
+  Std. error                    |   .031295  .0415581  .0481584
+Subjective social status        |                              
+  Coefficient                   | -.0301433 -.0311437 -.0233614
+  Std. error                    |   .009862  .0125676  .0157762
+Unemployed                      |                              
+  Coefficient                   |         0         0         0
+  Std. error                    |         0         0         0
+Employer                        |                              
+  Coefficient                   | -.0692869 -.0662042 -.1810331
+  Std. error                    |  .0904208  .1066489  .1751239
+Self-employed or Part-timer     |                              
+  Coefficient                   | -.0903656  -.061679 -.1770179
+  Std. error                    |  .0611753  .0789569   .098405
+Employed                        |                              
+  Coefficient                   | -.0300539 -.1126377  .0333508
+  Std. error                    |  .0463105  .0654487  .0664088
+Single                          |                              
+  Coefficient                   |         0         0         0
+  Std. error                    |         0         0         0
+Married or cohabiting           |                              
+  Coefficient                   | -.2140422  -.292867 -.1135938
+  Std. error                    |  .0479435  .0619998  .0762005
+Separated, divorced, or widowed |                              
+  Coefficient                   |  .1221403  .2469387  .0803495
+  Std. error                    |  .0657982  .0899024  .0993395
+Minan                           |                              
+  Coefficient                   |         0         0         0
+  Std. error                    |         0         0         0
+Hakka                           |                              
+  Coefficient                   |  .0627829  .0019591  .1214094
+  Std. error                    |  .0472915  .0619059   .072023
+Mainlander                      |                              
+  Coefficient                   |  .1403641   .101821  .1822483
+  Std. error                    |   .067687  .0964319  .0958357
+Aboriginal or other             |                              
+  Coefficient                   |  .1403165 -.1651331  .3340494
+  Std. error                    |  .1055853  .1530344  .1503203
+Metropolitan                    |                              
+  Coefficient                   |         0         0         0
+  Std. error                    |         0         0         0
+Suburban or town                |                              
+  Coefficient                   |  .0003528  .0385021 -.0343858
+  Std. error                    |  .0387531  .0535673  .0565702
+Rural or farm                   |                              
+  Coefficient                   | -.0760453 -.0375539 -.1218263
+  Std. error                    |   .046768  .0638117  .0692275
+No religion                     |                              
+  Coefficient                   |         0         0         0
+  Std. error                    |         0         0         0
+Buddism                         |                              
+  Coefficient                   |  .0089333  .0550272 -.0333597
+  Std. error                    |  .0514629  .0706447   .075249
+Daoism                          |                              
+  Coefficient                   |  .0311907   .028859  .0475856
+  Std. error                    |  .0512724  .0650891  .0816347
+Folk                            |                              
+  Coefficient                   |  .0231309  .0267681  .0313218
+  Std. error                    |  .0426729  .0551464  .0659315
+Catholic                        |                              
+  Coefficient                   | -.2210251 -.0211344 -.2930124
+  Std. error                    |  .1754296  .2468816  .2520061
+Christian                       |                              
+  Coefficient                   |  .1973053  .1874238   .229377
+  Std. error                    |  .0809185  .1269636  .1080396
+Intercept                       |                              
+  Coefficient                   |  1.811014  1.585447  2.179496
+  Std. error                    |  .1571168  .2048812   .239893
+r2                              |  .0779489  .1156326  .0795612
+r2_a                            |  .0673078  .0969316  .0583503
+N                               |      1775       923       851
+---------------------------------------------------------------
+
+. // collect style showbase off
+. collect style cell border_block, border(right, pattern(nil))
+
+. collect style cell result[_r_se], sformat("(%s)")
+
+. collect style cell result[_r_b N], nformat(%9.3g)
+
+. collect style cell result[_r_se], nformat(%9.2g)
+
+. collect style cell result[r2 r2_a], nformat(%9.4f)
+
+. collect style header result, level(hide)
+
+. collect style showempty on
+
+. // collect style column, extraspace(1)  dups(center)
+. collect style row stack, spacer delimiter(" x ")
+
+. collect style header result[r2 r2_a N p_d], level(label)
+
+. collect style cell result[p_d], nformat(%5.2g) minimum(0.001)
+option minimum() not allowed
+r(198);
+
+end of do-file
+
+r(198);
+
+. exit, clear

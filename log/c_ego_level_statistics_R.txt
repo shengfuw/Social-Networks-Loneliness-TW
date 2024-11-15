@@ -1,0 +1,145 @@
+[1] "Time began:"
+[1] "2024-11-15 13:06:09 CST"
+[1] 1290   63
+[1] 3966   18
+[1] 4207    4
+1290 Egos/ Ego Networks 
+3966 Alters 
+Min. Netsize 1 
+Average Netsize 3.07441860465116 
+Max. Netsize 5 
+Average Density 0.793605972086985 
+Alter survey design:
+  Maximum nominations: Inf 
+$`100701`
+IGRAPH c60d4e0 UNW- 2 1 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edge from c60d4e0 (vertex names):
+[1] 1007011--1007012
+
+$`100705`
+IGRAPH 85d6a61 UNW- 3 0 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edges from 85d6a61 (vertex names):
+
+$`100712`
+IGRAPH 4698516 UNW- 3 3 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edges from 4698516 (vertex names):
+[1] 1007121--1007122 1007121--1007123 1007122--1007123
+
+$`100714`
+IGRAPH fb0d3f3 UNW- 5 4 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edges from fb0d3f3 (vertex names):
+[1] 1007141--1007144 1007142--1007143 1007142--1007144 1007143--1007144
+
+$`100715`
+IGRAPH fe63b0b UNW- 5 10 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edges from fe63b0b (vertex names):
+ [1] 1007151--1007152 1007151--1007153 1007151--1007154 1007151--1007155 1007152--1007153
+ [6] 1007152--1007154 1007152--1007155 1007153--1007154 1007153--1007155 1007154--1007155
+
+$`100719`
+IGRAPH 90c2d92 UNW- 3 3 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edges from 90c2d92 (vertex names):
+[1] 1007191--1007192 1007191--1007193 1007192--1007193
+
+[1] "100701" "100705" "100712" "100714" "100715" "100719"
+[1] "igraph"
++ 6/6 vertices, named, from 18337f1:
+[1] 1007211 1007212 1007213 1007214 1007215 ego    
+[1] 1
+     ego 
+1.833333 
+IGRAPH fe63b0b UNW- 5 10 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edges from fe63b0b (vertex names):
+ [1] 1007151--1007152 1007151--1007153 1007151--1007154 1007151--1007155 1007152--1007153
+ [6] 1007152--1007154 1007152--1007155 1007153--1007154 1007153--1007155 1007154--1007155
+[1] "igraph"
++ 5/5 vertices, named, from fe63b0b:
+[1] 1007151 1007152 1007153 1007154 1007155
+<labelled<double>[10]>
+ [1] 2 2 2 2 2 2 1 2 1 1
+
+Labels:
+IGRAPH 67d4f1b UNW- 6 15 -- 
++ attr: .egoID (g/n), name (v/c), pernet_size (v/n), degree (v/n), tie_strength
+| (v/c), rel_raw (v/c), rel (v/c), rel2 (v/c), meet_raw (v/c), meet (v/c), female
+| (v/n), age (v/n), agecat (v/c), marital (v/c), ethnicity (v/c), educat (v/c),
+| subjective_status (v/n), eduyear (v/n), weight (e/n)
++ edges from 67d4f1b (vertex names):
+ [1] 1007151--1007152 1007151--1007153 1007151--1007154 1007151--1007155 1007152--1007153
+ [6] 1007152--1007154 1007152--1007155 1007153--1007154 1007153--1007155 1007154--1007155
+[11] 1007151--ego     1007152--ego     1007153--ego     1007154--ego     1007155--ego    
++ 6/6 vertices, named, from 67d4f1b:
+[1] 1007151 1007152 1007153 1007154 1007155 ego    
+<labelled<double>[15]>
+ [1]  2  2  2  2  2  2  1  2  1  1 NA NA NA NA NA
+
+Labels:
+<labelled<double>[15]>
+ [1] 2 2 2 2 2 2 1 2 1 1 3 3 3 3 3
+
+Labels:
+1007151 1007152 1007153 1007154 1007155 
+      2       0       2       2       1 
+5 x 5 sparse Matrix of class "dgCMatrix"
+        1007151 1007152 1007153 1007154 1007155
+1007151       .       2       2       2       2
+1007152       2       .       2       2       1
+1007153       2       2       .       2       1
+1007154       2       2       2       .       1
+1007155       2       1       1       1       .
+# A tbl_graph: 5 nodes and 10 edges
+#
+# An undirected simple graph with 1 component
+#
+#
+[1] 35 60 41 62 36
+[1] 46.8
+── Data Summary ────────────────────────
+                           Values
+Name                       data  
+Number of rows             5     
+Number of columns          1     
+_______________________          
+Column type frequency:           
+  numeric                  1     
+________________________         
+Group variables            None  
+    V(gr)$educat n percent
+ Graduate school 1     0.2
+     High school 2     0.4
+     Junior high 1     0.2
+      University 1     0.2
+ E(gr)$weight n percent
+            1 3     0.3
+            2 7     0.7
+[1] "2024-11-15 13:11:25 CST"
+[1] "Time spent:"
+Time difference of 5.39164 mins
